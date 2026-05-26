@@ -48,6 +48,10 @@ python -m venv venv
 # Activate the virtual environment
 .\venv\Scripts\activate
 
+# ⚠️ Note: If you get a "running scripts is disabled on this system" error, run:
+# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+# Then try activating again.
+
 # Install all required Python packages
 pip install -r requirements.txt
 ```
