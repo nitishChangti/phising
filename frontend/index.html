@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PhishShield AI — ML-powered phishing website detection. Enterprise-grade Random Forest model trained on 30+ URL features. Classify any URL as Phishing or Legitimate in real-time.">
+    <meta name="keywords" content="phishing detection, URL scanner, machine learning, cybersecurity, random forest">
+    <title>PhishShield AI — Detect Phishing Websites in Real-Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Particle Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Glow Orbs (ambient lighting) -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-brand">
+                <div class="brand-logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" fill="url(#shield-grad)" opacity="0.9"/>
+                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke="url(#shield-stroke)" stroke-width="1.5" fill="none"/>
+                        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="shield-grad" x1="3" y1="2" x2="21" y2="19">
+                                <stop stop-color="#00e5a0"/>
+                                <stop offset="1" stop-color="#0ea5e9"/>
+                            </linearGradient>
+                            <linearGradient id="shield-stroke" x1="3" y1="2" x2="21" y2="19">
+                                <stop stop-color="#00e5a0"/>
+                                <stop offset="1" stop-color="#0ea5e9"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="brand-text">PhishShield <span class="brand-accent">AI</span></span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="#home" class="nav-link active" data-section="home">Home</a>
+                <a href="#detection" class="nav-link" data-section="detection">Detection</a>
+                <a href="#features" class="nav-link" data-section="features">Features</a>
+                <a href="#results" class="nav-link" data-section="results">Results</a>
+                <a href="#about" class="nav-link" data-section="about">About</a>
+                <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+            </div>
+            <a href="#detection" class="nav-cta">
+                <i data-lucide="scan" class="cta-lucide"></i> Scan a URL Free
+            </a>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== SECTION 1: HERO ========== -->
+    <section id="home" class="section hero-section">
+        <div class="container">
+            <div class="hero-badge animate-on-scroll">
+                <span class="badge-dot"></span>
+                ML-POWERED DETECTION SYSTEM
+            </div>
+            <h1 class="hero-title animate-on-scroll">
+                Detect <span class="text-gradient">Phishing</span><br>
+                Websites in <span class="text-underline">Real-Time</span>
+            </h1>
+            <p class="hero-subtitle animate-on-scroll">
+                Enterprise-grade Random Forest & Decision Tree models trained on<br>
+                30+ URL features. Classify any URL as Phishing or Legitimate in under 2 seconds.
+            </p>
+
+            <!-- Hero Scanner -->
+            <div class="hero-scanner animate-on-scroll">
+                <div class="scanner-input-wrap">
+                    <div class="scanner-icon-wrap">
+                        <i data-lucide="link" class="scanner-lucide"></i>
+                    </div>
+                    <input type="text" id="hero-url-input" class="scanner-input"
+                           placeholder="https://suspicious-site.com/login">
+                    <button class="scanner-btn" id="hero-scan-btn">
+                        <i data-lucide="radar" class="btn-lucide"></i> Analyze Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero Stats Row -->
+            <div class="hero-stats animate-on-scroll">
+                <div class="hero-stat">
+                    <i data-lucide="check-circle-2" class="stat-lucide stat-color-green"></i>
+                    <span>97% Accuracy</span>
+                </div>
+                <div class="hero-stat">
+                    <i data-lucide="zap" class="stat-lucide stat-color-yellow"></i>
+                    <span>Real-time Detection</span>
+                </div>
+                <div class="hero-stat">
+                    <i data-lucide="shield-check" class="stat-lucide stat-color-cyan"></i>
+                    <span>30+ ML Features</span>
+                </div>
+                <div class="hero-stat">
+                    <i data-lucide="bar-chart-3" class="stat-lucide stat-color-purple"></i>
+                    <span>IEEE Research-Based</span>
+                </div>
+            </div>
+
+            <!-- Hero Metric Cards -->
+            <div class="hero-metrics animate-on-scroll">
+                <div class="metric-card">
+                    <div class="metric-icon metric-icon-teal">
+                        <i data-lucide="globe" class="metric-lucide"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value count-up" data-target="2400000" data-suffix="+">0</span>
+                        <span class="metric-label">URLs Analyzed</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon metric-icon-green">
+                        <i data-lucide="shield-check" class="metric-lucide"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value count-up" data-target="98.7" data-suffix="%" data-decimal="true">0</span>
+                        <span class="metric-label">Phishing Blocked</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon metric-icon-cyan">
+                        <i data-lucide="timer" class="metric-lucide"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-value">&lt; 1.8s</span>
+                        <span class="metric-label">Response Time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 2: DETECTION ========== -->
+    <section id="detection" class="section detection-section">
+        <div class="container">
+            <div class="detection-card animate-on-scroll">
+                <div class="detection-input-wrap">
+                    <div class="scanner-icon-wrap">
+                        <i data-lucide="link" class="scanner-lucide"></i>
+                    </div>
+                    <input type="text" id="detection-url-input" class="detection-input"
+                           placeholder="https://enter-url-here.com/path">
+                    <button class="detection-btn" id="detection-scan-btn">
+                        <i data-lucide="radar" class="btn-lucide"></i> Scan URL
+                    </button>
+                </div>
+
+                <!-- Sample URLs -->
+                <div class="sample-urls">
+                    <span class="sample-label">Try sample:</span>
+                    <button class="sample-chip" data-url="https://paypal-verify-account.suspicious-site.tk/login">https://paypal-verify-acco…</button>
+                    <button class="sample-chip" data-url="https://www.google.com">https://www.google.com</button>
+                    <button class="sample-chip" data-url="http://192.168.1.1/bank-login.php">http://192.168.1.1/bank-lo…</button>
+                    <button class="sample-chip" data-url="https://amazon-secure-checkout.ml/verify">https://amazon-secure-chec…</button>
+                    <button class="sample-chip" data-url="https://github.com/openai/">https://github.com/openai/…</button>
+                </div>
+            </div>
+
+            <!-- Detection Result -->
+            <div class="detection-result" id="detection-result" style="display: none;">
+                <div class="result-header" id="result-header">
+                    <div class="result-icon" id="result-icon">
+                        <i data-lucide="shield-check" class="result-lucide"></i>
+                    </div>
+                    <div class="result-info">
+                        <h3 class="result-title" id="result-title">Scanning...</h3>
+                        <p class="result-url" id="result-url"></p>
+                    </div>
+                    <div class="result-badge" id="result-badge">
+                        <span class="badge-confidence" id="result-confidence">0%</span>
+                    </div>
+                </div>
+
+                <!-- Confidence Bar -->
+                <div class="confidence-bar-wrap">
+                    <div class="confidence-labels">
+                        <span class="label-safe">Safe</span>
+                        <span class="label-danger">Dangerous</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidence-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Feature Analysis -->
+                <div class="feature-analysis" id="feature-analysis">
+                    <h4 class="analysis-title">
+                        <i data-lucide="activity" class="analysis-lucide"></i> Feature Analysis
+                    </h4>
+                    <div class="feature-grid" id="feature-grid"></div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="detection-loading" id="detection-loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing URL features with ML model...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 3: FEATURES ========== -->
+    <section id="features" class="section features-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">
+                    <span class="badge-dot"></span>
+                    IEEE-BASED FEATURE EXTRACTION
+                </div>
+                <h2 class="section-title">
+                    30+ Features Extracted <span class="text-gradient">Automatically</span>
+                </h2>
+                <p class="section-subtitle">
+                    Our system analyzes URL structure, domain properties, and content-based indicators to identify phishing attempts.
+                </p>
+            </div>
+
+            <!-- Feature Cards Grid -->
+            <div class="features-grid">
+                <!-- Column 1: URL-Based -->
+                <div class="feature-column feature-column-cyan animate-on-scroll">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">IP Address in URL</h4>
+                        <p class="feature-desc">Using an IP instead of domain name is a strong phishing indicator.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">@ Symbol Presence</h4>
+                        <p class="feature-desc">The @ symbol in URLs forces browsers to ignore everything before it.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">Hyphens in Domain</h4>
+                        <p class="feature-desc">Domains with multiple hyphens often mimic legitimate sites.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">HTTPS Protocol</h4>
+                        <p class="feature-desc">Absence of HTTPS suggests an insecure or spoofed connection.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">Special Characters</h4>
+                        <p class="feature-desc">High count of special chars in URL path signals obfuscation attempts.</p>
+                    </div>
+                </div>
+
+                <!-- Column 2: Domain-Based -->
+                <div class="feature-column feature-column-orange animate-on-scroll" style="animation-delay: 0.15s;">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">DNS Record</h4>
+                        <p class="feature-desc">Absence of DNS records is a strong sign of a fraudulent domain.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Website Traffic</h4>
+                        <p class="feature-desc">Alexa rank > 100,000 or no rank may indicate low-traffic phishing sites.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Sub-domain Depth</h4>
+                        <p class="feature-desc">Multiple sub-domain levels are used to mimic legitimate URLs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Domain Registrar</h4>
+                        <p class="feature-desc">Certain low-cost/free registrars are disproportionately used by phishers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">SSL Certificate Age</h4>
+                        <p class="feature-desc">Very recently issued SSL certs correlate with newly created phishing sites.</p>
+                    </div>
+                </div>
+
+                <!-- Column 3: Content-Based -->
+                <div class="feature-column feature-column-purple animate-on-scroll" style="animation-delay: 0.3s;">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">JavaScript Pop-ups</h4>
+                        <p class="feature-desc">Excessive pop-up windows are used to harvest credentials deceptively.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">Redirect Count</h4>
+                        <p class="feature-desc">Multiple redirections obscure the final malicious destination URL.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">Right-click Disabled</h4>
+                        <p class="feature-desc">Disabling right-click prevents source inspection of phishing pages.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">External Resources</h4>
+                        <p class="feature-desc">High ratio of external assets points to a cloned website structure.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">Form Action URL</h4>
+                        <p class="feature-desc">Forms posting to a different domain than the page reveal data theft.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Stats -->
+            <div class="feature-stats animate-on-scroll">
+                <div class="fstat-card">
+                    <div class="fstat-icon fstat-icon-cyan"><i data-lucide="layout-grid" class="fstat-lucide"></i></div>
+                    <div class="fstat-info">
+                        <span class="fstat-value">30+</span>
+                        <span class="fstat-label">Total Features</span>
+                    </div>
+                </div>
+                <div class="fstat-card">
+                    <div class="fstat-icon fstat-icon-green"><i data-lucide="layers" class="fstat-lucide"></i></div>
+                    <div class="fstat-info">
+                        <span class="fstat-value">3</span>
+                        <span class="fstat-label">Feature Categories</span>
+                    </div>
+                </div>
+                <div class="fstat-card">
+                    <div class="fstat-icon fstat-icon-yellow"><i data-lucide="zap" class="fstat-lucide"></i></div>
+                    <div class="fstat-info">
+                        <span class="fstat-value">&lt; 200ms</span>
+                        <span class="fstat-label">Extraction Time</span>
+                    </div>
+                </div>
+                <div class="fstat-card">
+                    <div class="fstat-icon fstat-icon-purple"><i data-lucide="book-open" class="fstat-lucide"></i></div>
+                    <div class="fstat-info">
+                        <span class="fstat-value">IEEE</span>
+                        <span class="fstat-label">Research Basis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 4: RESULTS ========== -->
+    <section id="results" class="section results-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">
+                    <span class="badge-dot"></span>
+                    MODEL PERFORMANCE
+                </div>
+                <h2 class="section-title">
+                    ML Model <span class="text-gradient">Results</span>
+                </h2>
+                <p class="section-subtitle">
+                    Comprehensive comparison of 4 classification algorithms on phishing URL detection.
+                </p>
+            </div>
+
+            <div class="results-grid">
+                <!-- Algorithm Comparison -->
+                <div class="results-main animate-on-scroll">
+                    <div class="results-card">
+                        <h3 class="card-label">ALGORITHM COMPARISON</h3>
+
+                        <div class="algo-row">
+                            <div class="algo-header">
+                                <span class="algo-dot algo-dot-green"></span>
+                                <span class="algo-name">Random Forest</span>
+                                <span class="algo-best-badge">Best</span>
+                                <span class="algo-accuracy" id="rf-accuracy">97.3%</span>
+                            </div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-green" data-width="97.3" style="width: 0%"></div></div>
+                            <div class="algo-sub-metrics">
+                                <div class="sub-metric"><span class="sub-value" id="rf-precision">96.8%</span><span class="sub-label">Precision</span></div>
+                                <div class="sub-metric"><span class="sub-value" id="rf-recall">97.1%</span><span class="sub-label">Recall</span></div>
+                                <div class="sub-metric"><span class="sub-value" id="rf-f1">96.9%</span><span class="sub-label">F1 Score</span></div>
+                            </div>
+                        </div>
+
+                        <div class="algo-row">
+                            <div class="algo-header">
+                                <span class="algo-dot algo-dot-orange"></span>
+                                <span class="algo-name">Decision Tree</span>
+                                <span class="algo-accuracy" id="dt-accuracy">93.1%</span>
+                            </div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-orange" data-width="93.1" style="width: 0%"></div></div>
+                        </div>
+
+                        <div class="algo-row">
+                            <div class="algo-header">
+                                <span class="algo-dot algo-dot-pink"></span>
+                                <span class="algo-name">Naive Bayes</span>
+                                <span class="algo-accuracy" id="nb-accuracy">88.4%</span>
+                            </div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-pink" data-width="88.4" style="width: 0%"></div></div>
+                        </div>
+
+                        <div class="algo-row">
+                            <div class="algo-header">
+                                <span class="algo-dot algo-dot-blue"></span>
+                                <span class="algo-name">Logistic Reg.</span>
+                                <span class="algo-accuracy" id="lr-accuracy">91.2%</span>
+                            </div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-blue" data-width="91.2" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="results-sidebar animate-on-scroll" style="animation-delay: 0.2s;">
+                    <div class="results-card">
+                        <h3 class="card-label">CONFUSION MATRIX (RANDOM FOREST)</h3>
+                        <div class="confusion-grid">
+                            <div class="cm-cell cm-tp"><span class="cm-value" id="cm-tp">4,865</span><span class="cm-label">True Positive</span></div>
+                            <div class="cm-cell cm-fp"><span class="cm-value" id="cm-fp">135</span><span class="cm-label">False Positive</span></div>
+                            <div class="cm-cell cm-fn"><span class="cm-value" id="cm-fn">132</span><span class="cm-label">False Negative</span></div>
+                            <div class="cm-cell cm-tn"><span class="cm-value" id="cm-tn">4,712</span><span class="cm-label">True Negative</span></div>
+                        </div>
+                        <div class="cm-overall">Overall Accuracy: <span class="text-gradient" id="cm-overall">97.3%</span></div>
+                    </div>
+
+                    <div class="results-card">
+                        <h3 class="card-label">DATASET STATISTICS</h3>
+                        <div class="ds-stats">
+                            <div class="ds-row"><div class="ds-icon-wrap"><i data-lucide="file-text" class="ds-lucide"></i></div><span class="ds-name">Total Samples</span><span class="ds-value" id="ds-total">11,055</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-red"><i data-lucide="fish" class="ds-lucide"></i></div><span class="ds-name">Phishing URLs</span><span class="ds-value" id="ds-phishing">4,898</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-green"><i data-lucide="check-circle-2" class="ds-lucide"></i></div><span class="ds-name">Legitimate URLs</span><span class="ds-value" id="ds-legitimate">6,157</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-blue"><i data-lucide="split" class="ds-lucide"></i></div><span class="ds-name">Training Split</span><span class="ds-value">80% / 20%</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-purple"><i data-lucide="repeat-2" class="ds-lucide"></i></div><span class="ds-name">Cross Validation</span><span class="ds-value">10-fold</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Metric Cards -->
+            <div class="results-bottom-stats animate-on-scroll">
+                <div class="rb-card">
+                    <div class="rb-icon rb-icon-green"><i data-lucide="shield-check" class="rb-lucide"></i></div>
+                    <div class="rb-value">97.3%</div>
+                    <div class="rb-label">Accuracy</div>
+                </div>
+                <div class="rb-card">
+                    <div class="rb-icon rb-icon-cyan"><i data-lucide="crosshair" class="rb-lucide"></i></div>
+                    <div class="rb-value">96.8%</div>
+                    <div class="rb-label">Precision</div>
+                </div>
+                <div class="rb-card">
+                    <div class="rb-icon rb-icon-purple"><i data-lucide="bar-chart-3" class="rb-lucide"></i></div>
+                    <div class="rb-value">97.1%</div>
+                    <div class="rb-label">Recall</div>
+                </div>
+                <div class="rb-card">
+                    <div class="rb-icon rb-icon-orange"><i data-lucide="trending-up" class="rb-lucide"></i></div>
+                    <div class="rb-value">96.9%</div>
+                    <div class="rb-label">F1 Score</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 5: ABOUT ========== -->
+    <section id="about" class="section about-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2 class="section-title">
+                    How <span class="text-gradient">PhishShield AI</span> Works
+                </h2>
+                <p class="section-subtitle">
+                    A four-stage intelligent pipeline from raw URL to accurate phishing<br>
+                    classification — built on IEEE research and modern ML.
+                </p>
+            </div>
+
+            <!-- Pipeline Steps -->
+            <div class="pipeline animate-on-scroll">
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-cyan">
+                        <span class="step-number">1</span>
+                        <i data-lucide="link" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">URL Input</h4>
+                    <p class="step-desc">User submits a suspicious URL through the web interface for immediate analysis.</p>
+                </div>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-orange">
+                        <span class="step-number">2</span>
+                        <i data-lucide="settings" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">Feature Extraction</h4>
+                    <p class="step-desc">30+ features extracted from URL structure, domain records, and HTML/JS content.</p>
+                </div>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-purple">
+                        <span class="step-number">3</span>
+                        <i data-lucide="cpu" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">ML Model Processing</h4>
+                    <p class="step-desc">Random Forest ensemble model classifies the feature vector with 97.3% accuracy.</p>
+                </div>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-green">
+                        <span class="step-number">4</span>
+                        <i data-lucide="check-circle-2" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">Prediction Output</h4>
+                    <p class="step-desc">Result returned with confidence score: Phishing or Legitimate with explanation.</p>
+                </div>
+            </div>
+
+            <!-- Why Random Forest -->
+            <div class="about-rf animate-on-scroll">
+                <div class="rf-visual">
+                    <div class="rf-accuracy-circle">
+                        <svg class="rf-ring" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" stroke="rgba(0,229,160,0.15)" stroke-width="6" fill="none"/>
+                            <circle cx="60" cy="60" r="54" stroke="url(#ring-grad)" stroke-width="6" fill="none"
+                                    stroke-dasharray="339.3" stroke-dashoffset="9.2"
+                                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                            <defs>
+                                <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00e5a0"/>
+                                    <stop offset="100%" stop-color="#0ea5e9"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="rf-center-text">
+                            <span class="rf-percentage">97.3%</span>
+                            <span class="rf-sublabel">RF Accuracy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="rf-content">
+                    <h3 class="rf-title">
+                        Why <span class="text-gradient">Random Forest</span><br>
+                        Outperforms the Rest
+                    </h3>
+                    <p class="rf-desc">
+                        Random Forest is an ensemble learning method that builds multiple decision trees during
+                        training and outputs the mode of the classes for classification. This reduces overfitting
+                        significantly and provides more robust predictions across unseen phishing URLs.
+                    </p>
+                    <ul class="rf-features">
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Ensemble of 100 decision trees for each URL</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Handles non-linear feature interactions automatically</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Built-in feature importance ranking</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Resistant to overfitting on training data</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> 10-fold cross-validated for reliability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECTION 6: CONTACT ========== -->
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">
+                    <span class="badge-dot"></span>
+                    GET IN TOUCH
+                </div>
+                <h2 class="section-title">
+                    Contact & <span class="text-gradient">Collaborate</span>
+                </h2>
+                <p class="section-subtitle">
+                    Have questions about the project, want to integrate the API, or<br>
+                    looking to collaborate on cybersecurity research?
+                </p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info animate-on-scroll">
+                    <div class="contact-card">
+                        <div class="contact-icon contact-icon-teal"><i data-lucide="mail" class="contact-lucide"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">contact@phishshield.ai</span>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon contact-icon-purple"><i data-lucide="github" class="contact-lucide"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">GitHub</span>
+                            <span class="contact-value">github.com/phishshield-ai</span>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon contact-icon-blue"><i data-lucide="file-text" class="contact-lucide"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Research Paper</span>
+                            <span class="contact-value">IEEE Xplore Publication</span>
+                        </div>
+                    </div>
+                    <div class="about-card">
+                        <h4 class="about-card-title">About the Project</h4>
+                        <ul class="about-list">
+                            <li><i data-lucide="check" class="about-check-lucide"></i> Random Forest with 97.3% Accuracy</li>
+                            <li><i data-lucide="check" class="about-check-lucide"></i> 30+ URL Feature Extraction</li>
+                            <li><i data-lucide="check" class="about-check-lucide"></i> Django REST API Backend</li>
+                            <li><i data-lucide="check" class="about-check-lucide"></i> Open Source & Extensible</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="contact-form-wrap animate-on-scroll" style="animation-delay: 0.2s;">
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-input" placeholder="Your full name" required></div>
+                            <div class="form-group"><label class="form-label">Email Address *</label><input type="email" class="form-input" placeholder="you@example.com" required></div>
+                        </div>
+                        <div class="form-group"><label class="form-label">Subject</label>
+                            <select class="form-input form-select">
+                                <option>General Inquiry</option>
+                                <option>API Integration</option>
+                                <option>Research Collaboration</option>
+                                <option>Bug Report</option>
+                                <option>Feature Request</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Message</label>
+                            <textarea class="form-input form-textarea" placeholder="Describe your question, idea or collaboration proposal..." rows="4" maxlength="500"></textarea>
+                            <span class="form-counter">0/500</span>
+                        </div>
+                        <button type="submit" class="form-submit-btn">
+                            <i data-lucide="send" class="submit-lucide"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#home" class="nav-brand">
+                        <div class="brand-logo">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" fill="url(#shield-grad2)" opacity="0.9"/>
+                                <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke="#00e5a0" stroke-width="1.5" fill="none"/>
+                                <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs><linearGradient id="shield-grad2" x1="3" y1="2" x2="21" y2="19"><stop stop-color="#00e5a0"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs>
+                            </svg>
+                        </div>
+                        <span class="brand-text">PhishShield <span class="brand-accent">AI</span></span>
+                    </a>
+                    <p class="footer-desc">ML-powered phishing website detection. Built on IEEE research using Random Forest and Decision Tree algorithms for real-time URL classification.</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-link"><i data-lucide="github" class="social-lucide"></i></a>
+                        <a href="#" class="social-link"><i data-lucide="twitter" class="social-lucide"></i></a>
+                        <a href="#" class="social-link"><i data-lucide="mail" class="social-lucide"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-col-title">NAVIGATION</h4>
+                    <a href="#home" class="footer-link">Home</a>
+                    <a href="#detection" class="footer-link">Detection</a>
+                    <a href="#features" class="footer-link">Features</a>
+                    <a href="#results" class="footer-link">Results</a>
+                    <a href="#about" class="footer-link">About</a>
+                    <a href="#contact" class="footer-link">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-col-title">RESEARCH</h4>
+                    <a href="#" class="footer-link">IEEE Paper</a>
+                    <a href="#" class="footer-link">Random Forest</a>
+                    <a href="#" class="footer-link">Decision Tree</a>
+                    <a href="#" class="footer-link">Feature Extraction</a>
+                    <a href="#" class="footer-link">Dataset Info</a>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-col-title">RESOURCES</h4>
+                    <a href="#" class="footer-link">System Architecture</a>
+                    <a href="#" class="footer-link">ML Pipeline</a>
+                    <a href="#" class="footer-link">Accuracy Reports</a>
+                    <a href="#" class="footer-link">URL Scanner</a>
+                    <a href="#" class="footer-link">Get In Touch</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">© 2026 PhishShield AI — Phishing Detection System</p>
+                <div class="footer-status">
+                    <span class="status-dot"></span>
+                    System Operational
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
