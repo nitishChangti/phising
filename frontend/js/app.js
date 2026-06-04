@@ -295,8 +295,11 @@ class URLScanner {
         this.detBtn = document.getElementById('detection-scan-btn');
         this.resultDiv = document.getElementById('detection-result');
         this.loadingDiv = document.getElementById('detection-loading');
+        this.historyTableBody = document.getElementById('history-table-body');
+        
         this.setupListeners();
         this.checkPendingScan();
+        this.loadHistory();
     }
 
     checkPendingScan() {
@@ -308,6 +311,45 @@ class URLScanner {
                 this.detInput.value = pendingUrl;
                 setTimeout(() => this.scanURL(pendingUrl), 300);
             }
+        }
+    }
+
+    async loadHistory() {
+        if (!this.historyTableBody) return;
+        try {
+            const response = await fetch('/api/history/');
+            if (!response.ok) throw new Error('Failed to load history');
+            const data = await response.json();
+            const history = data.history || [];
+            
+            if (history.length === 0) {
+                this.historyTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="padding: 24px; text-align: center; color: var(--text-muted);">No scans run yet. History is empty.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            this.historyTableBody.innerHTML = history.map(item => {
+                const badgeClass = item.prediction === 'phishing' ? 'danger' : 'safe';
+                const labelText = item.prediction === 'phishing' ? 'Phishing' : 'Legitimate';
+                return `
+                    <tr>
+                        <td class="history-url-cell" title="${item.url}">${item.url}</td>
+                        <td><span class="history-badge ${badgeClass}">${labelText}</span></td>
+                        <td style="font-family: var(--font-display); font-weight: 700; color: ${item.prediction === 'phishing' ? 'var(--accent-red)' : 'var(--accent-green)'}">${item.confidence}%</td>
+                        <td style="color: var(--text-muted); font-size: 0.8rem;">${item.timestamp}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('History load error:', error);
+            this.historyTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="padding: 24px; text-align: center; color: var(--accent-red);">Failed to retrieve history log.</td>
+                </tr>
+            `;
         }
     }
 
@@ -416,6 +458,7 @@ class URLScanner {
 
         // Re-initialize Lucide icons for new elements
         if (window.lucide) lucide.createIcons();
+        this.loadHistory();
     }
 
     showDemoResult(url) {
@@ -544,6 +587,21 @@ class StatsLoader {
             this.setText('ds-total', stats.total_samples.toLocaleString());
             this.setText('ds-phishing', stats.phishing_urls.toLocaleString());
             this.setText('ds-legitimate', stats.legitimate_urls.toLocaleString());
+        }
+
+        // Update feature importance
+        const fiList = document.getElementById('feature-importance-list');
+        const importance = data.feature_importance || [];
+        if (fiList && importance.length > 0) {
+            fiList.innerHTML = importance.map(item => `
+                <div class="feature-importance-row">
+                    <div class="fi-header">
+                        <span class="fi-name">${item.name}</span>
+                        <span class="fi-pct">${item.importance}%</span>
+                    </div>
+                    <div class="fi-bar"><div class="fi-fill" style="width: ${item.importance}%"></div></div>
+                </div>
+            `).join('');
         }
     }
 

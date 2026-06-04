@@ -16,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 import joblib
 
 from .feature_extractor import FeatureExtractor
+from .models import URLScan
 
 
 # Load model and scaler at module level for performance. Real-world model loaded.
@@ -126,6 +127,17 @@ def predict_url(request):
             }
         }
 
+        # Save to scan history database
+        try:
+            URLScan.objects.create(
+                url=url,
+                prediction=result['prediction'],
+                confidence=result['confidence'],
+                risk_level=result['risk_level']
+            )
+        except Exception as db_err:
+            print(f"[PhishShield] History database save error: {db_err}")
+
         return JsonResponse(result)
 
     except Exception as e:
@@ -167,7 +179,7 @@ def get_stats(request):
 @require_http_methods(["GET"])
 def get_model_comparison(request):
     """
-    Get accuracy comparison of all trained models.
+    Get accuracy comparison of all trained models and feature importance metrics.
     
     GET /api/models/
     """
@@ -178,8 +190,54 @@ def get_model_comparison(request):
             'error': 'Metrics not available. Run train_model.py first.'
         }, status=503)
 
+    # Calculate feature importances dynamically
+    feature_importance = []
+    if _model is not None:
+        try:
+            importances = _model.feature_importances_
+            feature_names = _metrics.get('feature_names', [])
+            features_zipped = sorted(
+                zip(feature_names, importances),
+                key=lambda x: x[1],
+                reverse=True
+            )
+            feature_importance = [
+                {
+                    'name': name.replace('_', ' ').title(),
+                    'importance': round(float(imp) * 100, 1)
+                }
+                for name, imp in features_zipped[:8]
+            ]
+        except Exception as e:
+            print(f"Error extracting feature importances: {e}")
+
     return JsonResponse({
         'models': _metrics.get('model_results', {}),
         'best_model': _metrics.get('best_model', 'Random Forest'),
-        'dataset_stats': _metrics.get('dataset_stats', {})
+        'dataset_stats': _metrics.get('dataset_stats', {}),
+        'feature_importance': feature_importance
     })
+
+
+@require_http_methods(["GET"])
+def get_history(request):
+    """
+    Get the 10 most recent URL scans from the database.
+    
+    GET /api/history/
+    """
+    try:
+        scans = URLScan.objects.all()[:10]
+        history_list = [
+            {
+                'url': scan.url,
+                'prediction': scan.prediction,
+                'confidence': scan.confidence,
+                'risk_level': scan.risk_level,
+                'timestamp': scan.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            for scan in scans
+        ]
+        return JsonResponse({'history': history_list})
+    except Exception as e:
+        return JsonResponse({'error': f'Database query error: {str(e)}'}, status=500)

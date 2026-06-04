@@ -126,19 +126,124 @@
                             <div class="algo-bar"><div class="algo-fill algo-fill-blue" data-width="91.2" style="width: 0%"></div></div>
                         </div>
                     </div>
+
+                    <!-- Feature Importance Card -->
+                    <div class="results-card" style="margin-top: 24px;">
+                        <h3 class="card-label">RANDOM FOREST FEATURE IMPORTANCE</h3>
+                        <p class="card-desc" style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 20px; margin-top: -15px;">
+                            Relative contribution of top URL features to the Random Forest model's predictions.
+                        </p>
+                        <div class="feature-importance-list" id="feature-importance-list">
+                            <!-- Populated dynamically via JS -->
+                            <div class="feature-importance-row">
+                                <div class="fi-header">
+                                    <span class="fi-name">URL Length</span>
+                                    <span class="fi-pct">18.5%</span>
+                                </div>
+                                <div class="fi-bar"><div class="fi-fill" style="width: 18.5%"></div></div>
+                            </div>
+                            <div class="feature-importance-row">
+                                <div class="fi-header">
+                                    <span class="fi-name">SSL State</span>
+                                    <span class="fi-pct">15.2%</span>
+                                </div>
+                                <div class="fi-bar"><div class="fi-fill" style="width: 15.2%"></div></div>
+                            </div>
+                            <div class="feature-importance-row">
+                                <div class="fi-header">
+                                    <span class="fi-name">Domain Entropy</span>
+                                    <span class="fi-pct">12.1%</span>
+                                </div>
+                                <div class="fi-bar"><div class="fi-fill" style="width: 12.1%"></div></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Sidebar -->
                 <div class="results-sidebar animate-on-scroll" style="animation-delay: 0.2s;">
                     <div class="results-card">
                         <h3 class="card-label">CONFUSION MATRIX (RANDOM FOREST)</h3>
-                        <div class="confusion-grid">
-                            <div class="cm-cell cm-tp"><span class="cm-value" id="cm-tp">4,865</span><span class="cm-label">True Positive</span></div>
-                            <div class="cm-cell cm-fp"><span class="cm-value" id="cm-fp">135</span><span class="cm-label">False Positive</span></div>
-                            <div class="cm-cell cm-fn"><span class="cm-value" id="cm-fn">132</span><span class="cm-label">False Negative</span></div>
-                            <div class="cm-cell cm-tn"><span class="cm-value" id="cm-tn">4,712</span><span class="cm-label">True Negative</span></div>
+                        <div class="cm-table-container">
+                            <table class="cm-table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" rowspan="2" class="cm-header-empty"></th>
+                                        <th colspan="2" class="cm-header-predicted">Predicted Class</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="cm-header-class">Legitimate</th>
+                                        <th class="cm-header-class">Phishing</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th rowspan="2" class="cm-header-actual"><span>Actual Class</span></th>
+                                        <th class="cm-header-class">Legitimate</th>
+                                        <td class="cm-cell cm-tn-cell">
+                                            <span class="cm-value" id="cm-tn">4,712</span>
+                                            <span class="cm-label">TN</span>
+                                        </td>
+                                        <td class="cm-cell cm-fp-cell">
+                                            <span class="cm-value" id="cm-fp">135</span>
+                                            <span class="cm-label">FP</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="cm-header-class">Phishing</th>
+                                        <td class="cm-cell cm-fn-cell">
+                                            <span class="cm-value" id="cm-fn">132</span>
+                                            <span class="cm-label">FN</span>
+                                        </td>
+                                        <td class="cm-cell cm-tp-cell">
+                                            <span class="cm-value" id="cm-tp">4,865</span>
+                                            <span class="cm-label">TP</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="cm-overall">Overall Accuracy: <span class="text-gradient" id="cm-overall">97.3%</span></div>
+                        <div class="cm-overall" style="margin-top: 15px;">Overall Accuracy: <span class="text-gradient" id="cm-overall">97.3%</span></div>
+                    </div>
+
+                    <div class="results-card">
+                        <h3 class="card-label">ROC CURVE & AUC SCORE</h3>
+                        <div class="roc-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 10px 0;">
+                            <svg class="roc-chart" viewBox="-12 -5 125 115" style="width: 100%; max-width: 220px; overflow: visible;">
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="100" x2="100" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="0" y1="0" x2="0" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="0" y1="0" x2="100" y2="0" stroke="rgba(255,255,255,0.05)" stroke-dasharray="3" stroke-width="0.5"/>
+                                <line x1="100" y1="0" x2="100" y2="100" stroke="rgba(255,255,255,0.05)" stroke-dasharray="3" stroke-width="0.5"/>
+                                
+                                <!-- Diagonal Random Line -->
+                                <line x1="0" y1="100" x2="100" y2="0" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4" stroke-width="1"/>
+                                
+                                <!-- ROC Curve -->
+                                <path d="M 0 100 C 2 30, 8 2, 100 0" fill="none" stroke="url(#roc-grad)" stroke-width="3" style="filter: drop-shadow(0 0 6px rgba(0, 229, 160, 0.4));"/>
+                                
+                                <!-- Axes Labels -->
+                                <text x="50" y="112" fill="var(--text-muted)" font-size="7" text-anchor="middle" font-weight="600">False Positive Rate</text>
+                                <text x="-8" y="50" fill="var(--text-muted)" font-size="7" text-anchor="middle" font-weight="600" transform="rotate(-90 -8 50)">True Positive Rate</text>
+                                
+                                <!-- Ticks -->
+                                <text x="0" y="107" fill="var(--text-muted)" font-size="6" text-anchor="middle">0</text>
+                                <text x="100" y="107" fill="var(--text-muted)" font-size="6" text-anchor="middle">1</text>
+                                <text x="-4" y="102" fill="var(--text-muted)" font-size="6" text-anchor="right">0</text>
+                                <text x="-4" y="2" fill="var(--text-muted)" font-size="6" text-anchor="right">1</text>
+                                
+                                <defs>
+                                    <linearGradient id="roc-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#0ea5e9"/>
+                                        <stop offset="100%" stop-color="#00e5a0"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="roc-auc-badge" style="background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); border-radius: 8px; padding: 10px 18px; text-align: center; width: 100%;">
+                                <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">AUC = 0.987</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">Area Under Curve</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="results-card">

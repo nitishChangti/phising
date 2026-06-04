@@ -141,6 +141,28 @@
                 <div class="loading-spinner"></div>
                 <p class="loading-text">Analyzing URL features with ML model...</p>
             </div>
+
+            <!-- Scan History Card -->
+            <div class="detection-card animate-on-scroll" style="margin-top: 30px;" id="history-card">
+                <h3 class="card-label" style="font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase;">Recent Prediction History</h3>
+                <div style="overflow-x: auto; width: 100%;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>URL Path</th>
+                                <th>Result</th>
+                                <th>Confidence</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr>
+                                <td colspan="4" style="padding: 24px; text-align: center; color: var(--text-muted);">Loading prediction history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 
