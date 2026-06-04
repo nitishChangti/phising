@@ -13,6 +13,7 @@ sequenceDiagram
     participant Back as Backend View (views.py)
     participant FE as Feature Extractor (feature_extractor.py)
     participant ML as ML Model (model.pkl)
+    participant DB as SQLite DB (URLScan Model)
 
     User->>Front: Enters URL & clicks "Analyze"
     Note over Front: Show loading spinner
@@ -25,9 +26,16 @@ sequenceDiagram
     Note over ML: Evaluates features with 100 Decision Trees
     ML-->>Back: Returns predictions & probabilities
     Note over Back: Maps probability to risk level
+    Back->>DB: Saves scan log (URL, prediction, confidence, risk_level)
+    DB-->>Back: Confirms save
     Back-->>Front: Sends JSON response with results
     Note over Front: Hides loading spinner
     Front->>User: Renders Red/Green Badge, Progress Bar & Features
+    Front->>Back: Request GET /api/history/ to refresh log
+    Back->>DB: Queries 10 most recent scans (ordered by -timestamp)
+    DB-->>Back: Returns list of scans
+    Back-->>Front: Sends JSON array of scan logs
+    Front->>User: Dynamically updates the History Table
 ```
 
 ---
@@ -114,3 +122,24 @@ The JavaScript receives the JSON packet, stops the loading spinner, and updates 
   * For a safe URL (phishing probability `5.3%`), the bar fills just a tiny bit on the left (staying in the green **"Safe"** zone).
   * For a malicious URL (phishing probability `89.6%`), the bar fills almost completely to the right (reaching the red **"Dangerous"** zone).
 * **The Feature Grid:** Populates a detailed list of the top features evaluated by the model, showing you exactly why the AI made that decision (e.g. telling you the URL length, TLD status, or presence of special characters).
+
+---
+
+### 9. Database Persistence (History Log)
+* When a URL scan occurs, a record is persistently stored in the SQLite database through the Django ORM using the `URLScan` model.
+* The fields stored are:
+  - `url`: The raw scanned URL string.
+  - `prediction`: The classification result (`legitimate` or `phishing`).
+  - `confidence`: The model prediction confidence percentage.
+  - `risk_level`: The risk classification (`safe`, `low`, `medium`, `high`, `critical`).
+  - `timestamp`: The date and time of the scan.
+* On load and after every scan, the frontend queries `/api/history/` to fetch and render the 10 most recent scans in a tabular format.
+
+---
+
+### 10. Dynamic Performance Metrics & Validation (Results Page)
+* The **Results Page** does not display static placeholders. Instead, it queries the backend endpoint `/api/models/` to load performance stats computed during model training (`ml/metrics.json`).
+* It renders:
+  - **Dynamic Confusion Matrix**: TP, FP, FN, and TN values are updated dynamically according to the current model evaluation.
+  - **Random Forest Feature Importance Graph**: A visual progress bar rank of features according to Scikit-Learn's Gini importance calculation.
+  - **ROC Curve Integration**: Graphic representing true positive vs. false positive rate trade-offs.

@@ -40,16 +40,18 @@ This project evaluates multiple algorithms, but relies on **Random Forest** for 
 
 ### 4. Metrics: How We Measure Success
 * **Accuracy**: The percentage of overall correct predictions.
+* **Confusion Matrix**: A 2x2 table representing actual vs. predicted classifications to evaluate model performance (True Positives, False Positives, False Negatives, True Negatives).
+* **ROC Curve (Receiver Operating Characteristic)**: A graphical plot representing the classifier's trade-off between True Positive Rate and False Positive Rate across different probability thresholds.
 * **False Positive (FP)**: A safe site flagged as dangerous (e.g., your GitHub repository link). Minimizing this prevents user frustration.
 * **False Negative (FN)**: A dangerous site missed by the system. Minimizing this is critical to security.
 * **Precision**: Of all URLs flagged as *Phishing*, how many were *actually* phishing?
-* **Recall**: Of all *actual* phishing URLs in the test set, how many did the model successfully find?
+* **Recall / Sensitivity**: Of all *actual* phishing URLs in the test set, how many did the model successfully find?
 
 ---
 
 ## 🏗️ System Architecture
 
-PhishShield AI uses a modern, decoupled architecture:
+PhishShield AI uses a modern, decoupled architecture with persistent backend storage:
 
 ```mermaid
 graph TD
@@ -59,12 +61,14 @@ graph TD
     D -->|30-dim Array| E[Joblib Model Service]
     E -->|Random Forest Predictor| F[(model.pkl)]
     E -->|Confidence Score| C
+    C -->|Save Scan Log| G[(SQLite Database)]
     C -->|JSON Payload| B
 ```
 
-* **Frontend**: Responsive, modern multipage interface built with CSS variables, custom particle rendering, and dynamic DOM manipulation (housed in `frontend/`).
-* **API Layer**: Django REST Framework providing high-throughput endpoints for single URL scans and model performance statistics (housed in `backend/api/`).
-* **ML Layer**: Scikit-Learn pipeline using Random Forest, optimized via 10-fold cross-validation and serialized as binary structures (`.pkl`) for sub-millisecond inference.
+* **Frontend**: Responsive, modern multipage interface built with CSS variables, custom particle rendering, dynamic metrics charts (Confusion Matrix, Feature Importance, ROC Curve), and DOM manipulation (housed in `frontend/`).
+* **API Layer**: Django REST Framework endpoints for URL scans, model statistics, and retrieving persistent scan history from SQLite (housed in `backend/api/`).
+* **ML Layer**: Scikit-Learn pipeline using Random Forest (achieving 97.3% accuracy) and Decision Tree, optimized via 10-fold cross-validation and serialized as binary structures (`.pkl`) for sub-millisecond inference.
+* **Database Layer**: SQLite database using Django ORM to persistently store scan details (`URLScan` model), including URLs, predictions, confidences, risk levels, and timestamps.
 
 ---
 
@@ -76,7 +80,8 @@ phising/
 ├── backend/                       # Django API & Machine Learning Backend
 │   ├── api/                       # Django application logic
 │   │   ├── feature_extractor.py   # Extracts 30 numerical features from raw URLs
-│   │   ├── views.py               # API View controllers (Predict, Stats)
+│   │   ├── models.py              # URLScan database model definition
+│   │   ├── views.py               # API View controllers (Predict, Stats, History)
 │   │   └── urls.py                # API Endpoint mapping
 │   │
 │   ├── ml/                        # Model Training & Saved Artifacts
@@ -97,11 +102,11 @@ phising/
 │   ├── js/
 │   │   └── app.js                 # Event triggers, API fetches, UI updates
 │   ├── index.html                 # Home / Hero page
-│   ├── detection.html             # Real-time URL Scanner page
+│   ├── detection.html             # Real-time URL Scanner and History page
 │   ├── features.html              # Explanatory feature grid
-│   ├── results.html               # ML model metrics & evaluation page
+│   ├── results.html               # ML model metrics, Confusion Matrix & ROC page
 │   ├── about.html                 # Stage pipeline & Random Forest breakdown
-│   └── contact.html               # Feedback & support page
+│   └── contact.html               # Feedback, support & contact page
 │
 ├── HOW_IT_WORKS.md                # Sequence flow explanation
 ├── requirements.txt               # Backend dependencies
