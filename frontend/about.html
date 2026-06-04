@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PhishShield AI — ML-powered phishing website detection. Enterprise-grade Random Forest model trained on 30+ URL features. Classify any URL as Phishing or Legitimate in real-time.">
+    <meta name="description" content="PhishShield AI — How it works. A 4-stage pipeline from raw URL to Random Forest ML prediction.">
     <meta name="keywords" content="phishing detection, URL scanner, machine learning, cybersecurity, random forest">
-    <title>PhishShield AI — Detect Phishing Websites in Real-Time</title>
+    <title>About — PhishShield AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,84 +62,97 @@
         </div>
     </nav>
 
-    <!-- ========== SECTION 1: HERO ========== -->
-    <section id="home" class="section hero-section" style="padding-top: 130px; min-height: 85vh; display: flex; align-items: center;">
+    <!-- ========== SECTION: ABOUT ========== -->
+    <section id="about" class="section about-section" style="padding-top: 130px; min-height: 80vh;">
         <div class="container">
-            <div class="hero-badge animate-on-scroll">
-                <span class="badge-dot"></span>
-                ML-POWERED DETECTION SYSTEM
-            </div>
-            <h1 class="hero-title animate-on-scroll">
-                Detect <span class="text-gradient">Phishing</span><br>
-                Websites in <span class="text-underline">Real-Time</span>
-            </h1>
-            <p class="hero-subtitle animate-on-scroll">
-                Enterprise-grade Random Forest & Decision Tree models trained on<br>
-                30+ URL features. Classify any URL as Phishing or Legitimate in under 2 seconds.
-            </p>
-
-            <!-- Hero Scanner -->
-            <div class="hero-scanner animate-on-scroll">
-                <div class="scanner-input-wrap">
-                    <div class="scanner-icon-wrap">
-                        <i data-lucide="link" class="scanner-lucide"></i>
-                    </div>
-                    <input type="text" id="hero-url-input" class="scanner-input"
-                           placeholder="https://suspicious-site.com/login">
-                    <button class="scanner-btn" id="hero-scan-btn">
-                        <i data-lucide="radar" class="btn-lucide"></i> Analyze Now
-                    </button>
-                </div>
+            <div class="section-header animate-on-scroll">
+                <h2 class="section-title">
+                    How <span class="text-gradient">PhishShield AI</span> Works
+                </h2>
+                <p class="section-subtitle">
+                    A four-stage intelligent pipeline from raw URL to accurate phishing<br>
+                    classification — built on IEEE research and modern ML.
+                </p>
             </div>
 
-            <!-- Hero Stats Row -->
-            <div class="hero-stats animate-on-scroll">
-                <div class="hero-stat">
-                    <i data-lucide="check-circle-2" class="stat-lucide stat-color-green"></i>
-                    <span>97% Accuracy</span>
+            <!-- Pipeline Steps -->
+            <div class="pipeline animate-on-scroll">
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-cyan">
+                        <span class="step-number">1</span>
+                        <i data-lucide="link" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">URL Input</h4>
+                    <p class="step-desc">User submits a suspicious URL through the web interface for immediate analysis.</p>
                 </div>
-                <div class="hero-stat">
-                    <i data-lucide="zap" class="stat-lucide stat-color-yellow"></i>
-                    <span>Real-time Detection</span>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-orange">
+                        <span class="step-number">2</span>
+                        <i data-lucide="settings" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">Feature Extraction</h4>
+                    <p class="step-desc">30+ features extracted from URL structure, domain records, and HTML/JS content.</p>
                 </div>
-                <div class="hero-stat">
-                    <i data-lucide="shield-check" class="stat-lucide stat-color-cyan"></i>
-                    <span>30+ ML Features</span>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-purple">
+                        <span class="step-number">3</span>
+                        <i data-lucide="cpu" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">ML Model Processing</h4>
+                    <p class="step-desc">Random Forest ensemble model classifies the feature vector with 97.3% accuracy.</p>
                 </div>
-                <div class="hero-stat">
-                    <i data-lucide="bar-chart-3" class="stat-lucide stat-color-purple"></i>
-                    <span>IEEE Research-Based</span>
+                <div class="pipeline-line"></div>
+                <div class="pipeline-step">
+                    <div class="step-circle step-circle-green">
+                        <span class="step-number">4</span>
+                        <i data-lucide="check-circle-2" class="step-lucide"></i>
+                    </div>
+                    <h4 class="step-title">Prediction Output</h4>
+                    <p class="step-desc">Result returned with confidence score: Phishing or Legitimate with explanation.</p>
                 </div>
             </div>
 
-            <!-- Hero Metric Cards -->
-            <div class="hero-metrics animate-on-scroll">
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-teal">
-                        <i data-lucide="globe" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value count-up" data-target="2400000" data-suffix="+">0</span>
-                        <span class="metric-label">URLs Analyzed</span>
+            <!-- Why Random Forest -->
+            <div class="about-rf animate-on-scroll">
+                <div class="rf-visual">
+                    <div class="rf-accuracy-circle">
+                        <svg class="rf-ring" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" stroke="rgba(0,229,160,0.15)" stroke-width="6" fill="none"/>
+                            <circle cx="60" cy="60" r="54" stroke="url(#ring-grad)" stroke-width="6" fill="none"
+                                    stroke-dasharray="339.3" stroke-dashoffset="9.2"
+                                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                            <defs>
+                                <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00e5a0"/>
+                                    <stop offset="100%" stop-color="#0ea5e9"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="rf-center-text">
+                            <span class="rf-percentage">97.3%</span>
+                            <span class="rf-sublabel">RF Accuracy</span>
+                        </div>
                     </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-green">
-                        <i data-lucide="shield-check" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value count-up" data-target="98.7" data-suffix="%" data-decimal="true">0</span>
-                        <span class="metric-label">Phishing Blocked</span>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-cyan">
-                        <i data-lucide="timer" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value">&lt; 1.8s</span>
-                        <span class="metric-label">Response Time</span>
-                    </div>
+                <div class="rf-content">
+                    <h3 class="rf-title">
+                        Why <span class="text-gradient">Random Forest</span><br>
+                        Outperforms the Rest
+                    </h3>
+                    <p class="rf-desc">
+                        Random Forest is an ensemble learning method that builds multiple decision trees during
+                        training and outputs the mode of the classes for classification. This reduces overfitting
+                        significantly and provides more robust predictions across unseen phishing URLs.
+                    </p>
+                    <ul class="rf-features">
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Ensemble of 100 decision trees for each URL</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Handles non-linear feature interactions automatically</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Built-in feature importance ranking</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> Resistant to overfitting on training data</li>
+                        <li><i data-lucide="check" class="rf-check-lucide"></i> 10-fold cross-validated for reliability</li>
+                    </ul>
                 </div>
             </div>
         </div>

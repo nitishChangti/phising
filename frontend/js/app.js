@@ -234,20 +234,37 @@ class Navigation {
     }
 
     setupActiveSection() {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.id;
-                        this.links.forEach((link) => {
-                            link.classList.toggle('active', link.dataset.section === id);
-                        });
-                    }
-                });
-            },
-            { threshold: 0.3 }
-        );
-        this.sections.forEach((section) => observer.observe(section));
+        // Highlight active link based on the current page's filename/pathname
+        const path = window.location.pathname;
+        const page = path.split("/").pop() || 'index.html';
+        
+        this.links.forEach((link) => {
+            const href = link.getAttribute('href');
+            // Check if link matches page (e.g., "detection.html" or "detection")
+            const isMatch = href === page || 
+                            href === page.replace('.html', '') ||
+                            (page === 'index.html' && (href === 'index.html' || href === 'index' || href === '/' || href === ''));
+            
+            link.classList.toggle('active', isMatch);
+        });
+
+        // Fallback for single-page style section scrolling if sections are present
+        if (this.sections && this.sections.length > 1) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.id;
+                            this.links.forEach((link) => {
+                                link.classList.toggle('active', link.dataset.section === id);
+                            });
+                        }
+                    });
+                },
+                { threshold: 0.3 }
+            );
+            this.sections.forEach((section) => observer.observe(section));
+        }
     }
 
     setupSmoothScroll() {
@@ -279,6 +296,19 @@ class URLScanner {
         this.resultDiv = document.getElementById('detection-result');
         this.loadingDiv = document.getElementById('detection-loading');
         this.setupListeners();
+        this.checkPendingScan();
+    }
+
+    checkPendingScan() {
+        // Retrieve and execute any pending URL scan passed from the home page
+        const pendingUrl = localStorage.getItem('pendingScanUrl');
+        if (pendingUrl) {
+            localStorage.removeItem('pendingScanUrl');
+            if (this.detInput) {
+                this.detInput.value = pendingUrl;
+                setTimeout(() => this.scanURL(pendingUrl), 300);
+            }
+        }
     }
 
     setupListeners() {
@@ -286,9 +316,8 @@ class URLScanner {
             this.heroBtn.addEventListener('click', () => {
                 const url = this.heroInput.value.trim();
                 if (url) {
-                    this.detInput.value = url;
-                    document.getElementById('detection').scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => this.scanURL(url), 800);
+                    localStorage.setItem('pendingScanUrl', url);
+                    window.location.href = 'detection.html';
                 }
             });
             this.heroInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.heroBtn.click(); });
@@ -360,7 +389,8 @@ class URLScanner {
 
         confidenceFill.className = `confidence-fill ${isPhishing ? 'danger' : 'safe'}`;
         setTimeout(() => {
-            confidenceFill.style.width = (isPhishing ? data.phishing_probability : data.legitimate_probability) + '%';
+            // The progress bar represents the threat level (phishing probability) on a scale from Safe (0%) to Dangerous (100%)
+            confidenceFill.style.width = data.phishing_probability + '%';
         }, 100);
 
         const featureGrid = document.getElementById('feature-grid');

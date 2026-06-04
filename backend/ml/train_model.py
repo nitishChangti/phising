@@ -218,13 +218,21 @@ def main():
     data_dir = ml_dir.parent / 'data'
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    dataset_path = data_dir / 'dataset.csv'
+    # Check for custom dataset file in command line arguments
+    dataset_filename = 'dataset.csv'
+    if len(sys.argv) > 1:
+        dataset_filename = sys.argv[1]
+
+    dataset_path = data_dir / dataset_filename
 
     # Generate or load dataset
     if dataset_path.exists():
-        print("Loading existing dataset...")
+        print(f"Loading existing dataset from {dataset_path}...")
         dataset = pd.read_csv(dataset_path)
     else:
+        if dataset_filename != 'dataset.csv':
+            print(f"Error: Custom dataset file {dataset_path} not found.")
+            sys.exit(1)
         print("Generating synthetic phishing URL dataset...")
         dataset = generate_synthetic_dataset()
         dataset.to_csv(dataset_path, index=False)

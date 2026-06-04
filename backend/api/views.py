@@ -18,7 +18,7 @@ import joblib
 from .feature_extractor import FeatureExtractor
 
 
-# Load model and scaler at module level for performance
+# Load model and scaler at module level for performance. Real-world model loaded.
 _model = None
 _scaler = None
 _metrics = None

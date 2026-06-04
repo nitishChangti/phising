@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PhishShield AI — ML-powered phishing website detection. Enterprise-grade Random Forest model trained on 30+ URL features. Classify any URL as Phishing or Legitimate in real-time.">
+    <meta name="description" content="PhishShield AI — Contact our research team or submit a suggestion.">
     <meta name="keywords" content="phishing detection, URL scanner, machine learning, cybersecurity, random forest">
-    <title>PhishShield AI — Detect Phishing Websites in Real-Time</title>
+    <title>Contact — PhishShield AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,83 +62,77 @@
         </div>
     </nav>
 
-    <!-- ========== SECTION 1: HERO ========== -->
-    <section id="home" class="section hero-section" style="padding-top: 130px; min-height: 85vh; display: flex; align-items: center;">
+    <!-- ========== SECTION: CONTACT ========== -->
+    <section id="contact" class="section contact-section" style="padding-top: 130px; min-height: 80vh;">
         <div class="container">
-            <div class="hero-badge animate-on-scroll">
-                <span class="badge-dot"></span>
-                ML-POWERED DETECTION SYSTEM
-            </div>
-            <h1 class="hero-title animate-on-scroll">
-                Detect <span class="text-gradient">Phishing</span><br>
-                Websites in <span class="text-underline">Real-Time</span>
-            </h1>
-            <p class="hero-subtitle animate-on-scroll">
-                Enterprise-grade Random Forest & Decision Tree models trained on<br>
-                30+ URL features. Classify any URL as Phishing or Legitimate in under 2 seconds.
-            </p>
-
-            <!-- Hero Scanner -->
-            <div class="hero-scanner animate-on-scroll">
-                <div class="scanner-input-wrap">
-                    <div class="scanner-icon-wrap">
-                        <i data-lucide="link" class="scanner-lucide"></i>
-                    </div>
-                    <input type="text" id="hero-url-input" class="scanner-input"
-                           placeholder="https://suspicious-site.com/login">
-                    <button class="scanner-btn" id="hero-scan-btn">
-                        <i data-lucide="radar" class="btn-lucide"></i> Analyze Now
-                    </button>
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">
+                    <span class="badge-dot"></span>
+                    GET IN TOUCH
                 </div>
+                <h2 class="section-title">
+                    Collaborate or <span class="text-gradient">Leave Feedback</span>
+                </h2>
+                <p class="section-subtitle">
+                    Have questions about the research paper or model implementation? We'd love to hear from you.
+                </p>
             </div>
 
-            <!-- Hero Stats Row -->
-            <div class="hero-stats animate-on-scroll">
-                <div class="hero-stat">
-                    <i data-lucide="check-circle-2" class="stat-lucide stat-color-green"></i>
-                    <span>97% Accuracy</span>
+            <div class="contact-grid">
+                <!-- Info Cards -->
+                <div class="contact-info animate-on-scroll">
+                    <div class="info-card">
+                        <div class="info-icon"><i data-lucide="mail" class="info-lucide"></i></div>
+                        <div class="info-content">
+                            <span class="info-label">Email Us</span>
+                            <span class="info-value">support@phishshield.ai</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i data-lucide="map-pin" class="info-lucide"></i></div>
+                        <div class="info-content">
+                            <span class="info-label">Research Institution</span>
+                            <span class="info-value">Department of Computer Science & Engineering</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i data-lucide="clock" class="info-lucide"></i></div>
+                        <div class="info-content">
+                            <span class="info-label">Response Time</span>
+                            <span class="info-value">Within 24-48 hours</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hero-stat">
-                    <i data-lucide="zap" class="stat-lucide stat-color-yellow"></i>
-                    <span>Real-time Detection</span>
-                </div>
-                <div class="hero-stat">
-                    <i data-lucide="shield-check" class="stat-lucide stat-color-cyan"></i>
-                    <span>30+ ML Features</span>
-                </div>
-                <div class="hero-stat">
-                    <i data-lucide="bar-chart-3" class="stat-lucide stat-color-purple"></i>
-                    <span>IEEE Research-Based</span>
-                </div>
-            </div>
 
-            <!-- Hero Metric Cards -->
-            <div class="hero-metrics animate-on-scroll">
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-teal">
-                        <i data-lucide="globe" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value count-up" data-target="2400000" data-suffix="+">0</span>
-                        <span class="metric-label">URLs Analyzed</span>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-green">
-                        <i data-lucide="shield-check" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value count-up" data-target="98.7" data-suffix="%" data-decimal="true">0</span>
-                        <span class="metric-label">Phishing Blocked</span>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon metric-icon-cyan">
-                        <i data-lucide="timer" class="metric-lucide"></i>
-                    </div>
-                    <div class="metric-info">
-                        <span class="metric-value">&lt; 1.8s</span>
-                        <span class="metric-label">Response Time</span>
+                <!-- Contact Form -->
+                <div class="contact-form-wrap animate-on-scroll" style="animation-delay: 0.2s;">
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" id="name" class="form-input" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" id="email" class="form-input" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" id="subject" class="form-input" placeholder="Research Collaboration" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea id="message" class="form-textarea" placeholder="Tell us more about your inquiry..." required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit-btn">
+                            <i data-lucide="send" class="btn-lucide"></i> Send Message
+                        </button>
+                    </form>
+                    <div class="form-success" id="form-success" style="display: none;">
+                        <div class="success-icon"><i data-lucide="check-circle-2" class="success-lucide"></i></div>
+                        <h4 class="success-title">Message Sent Successfully!</h4>
+                        <p class="success-text">Thank you for your feedback. We will get back to you shortly.</p>
                     </div>
                 </div>
             </div>
