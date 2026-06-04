@@ -435,25 +435,149 @@ class URLScanner {
             confidenceFill.style.width = data.phishing_probability + '%';
         }, 100);
 
-        const featureGrid = document.getElementById('feature-grid');
-        featureGrid.innerHTML = '';
+        const explainGrid = document.getElementById('explain-grid');
+        const structuredGrid = document.getElementById('structured-feature-grid');
+        
+        if (explainGrid) explainGrid.innerHTML = '';
+        if (structuredGrid) structuredGrid.innerHTML = '';
 
-        if (data.top_features) {
-            data.top_features.forEach((feat) => {
-                const importance = feat.importance;
-                let level = 'low';
-                if (importance > 15) level = 'high';
-                else if (importance > 8) level = 'medium';
+        // Risk Level Badge
+        const explainRiskLevel = document.getElementById('explain-risk-level');
+        if (explainRiskLevel) {
+            let riskText = "Low Risk";
+            let riskColor = "var(--accent-green)";
+            if (data.phishing_probability >= 80) { riskText = "Very High Risk"; riskColor = "var(--accent-red)"; }
+            else if (data.phishing_probability >= 60) { riskText = "High Risk"; riskColor = "var(--accent-red)"; }
+            else if (data.phishing_probability >= 40) { riskText = "Suspicious"; riskColor = "var(--accent-orange)"; }
+            
+            explainRiskLevel.textContent = riskText;
+            explainRiskLevel.style.color = riskColor;
+            explainRiskLevel.style.backgroundColor = riskColor + "20";
+        }
 
-                const item = document.createElement('div');
-                item.className = 'feature-item';
-                item.innerHTML = `
-                    <span class="feature-item-icon ${level}"></span>
-                    <span class="feature-item-name">${feat.name}</span>
-                    <span class="feature-item-value">${feat.value}</span>
-                `;
-                featureGrid.appendChild(item);
+        // Explain Prediction Panel (Top Contributors)
+        if (explainGrid && data.top_features) {
+            let topRiskHTML = '';
+            let topSafeHTML = '';
+            
+            const featureDict = {
+                'url length': { label: 'Excessive URL Length', why: 'Phishing URLs are often very long to hide the suspicious domain from the user.' },
+                'domain length': { label: 'Suspicious Domain Length', why: 'Very long or very short domains can indicate randomly generated phishing sites.' },
+                'num dots': { label: 'Multiple Subdomains (Dots)', why: 'Attackers use multiple dots to create fake subdomains like "paypal.com.security.update.com".' },
+                'has suspicious tld': { label: 'Suspicious Domain Extension (TLD)', why: 'Certain cheap or free domain extensions (like .tk, .ml) are heavily abused by phishers.' },
+                'uses https': { label: 'Missing HTTPS Security', why: 'Legitimate sites almost always use HTTPS. Its absence is a massive red flag.' },
+                'num hyphens': { label: 'Hyphen Usage in Domain', why: 'Phishers use hyphens to mimic legitimate brands (e.g., "secure-login-paypal").' },
+                'has @ symbol': { label: '@ Symbol Present', why: 'Browsers ignore everything before an "@" symbol, which attackers use to hide the real destination.' },
+                'num subdomains': { label: 'Deep Subdomain Structure', why: 'Complex subdomain structures are used to trick users into thinking they are on a trusted site.' },
+                'url entropy': { label: 'High URL Randomness (Entropy)', why: 'Random characters indicate an auto-generated or obfuscated phishing link.' },
+                'has ip address': { label: 'IP Address Usage', why: 'Using raw IP addresses instead of domain names is a common phishing indicator.' },
+                'num suspicious keywords': { label: 'Suspicious Keywords Found', why: 'The URL contains keywords (like "login", "verify", "secure") commonly used in phishing campaigns.' },
+                'num slashes': { label: 'Multiple URL Slashes (Deep Path)', why: 'Deeply nested paths are used to hide malicious scripts and bypass basic security filters.' },
+                'num digits': { label: 'Excessive Numbers in URL', why: 'Legitimate domains rarely rely on raw numbers, whereas phishing sites often use numerical parameters.' },
+                'num special chars': { label: 'Special Character Usage', why: 'Abnormal use of special characters is a technique to obfuscate malicious URLs.' }
+            };
+
+            data.top_features.forEach(feat => {
+                const nameKey = feat.name.toLowerCase();
+                const val = feat.value;
+                const imp = feat.importance.toFixed(1);
+                
+                // Get human readable details
+                const dictEntry = featureDict[nameKey] || { label: feat.name, why: 'This structural feature heavily influenced the model.' };
+                
+                // Heuristic to determine if a feature is acting as a risk or safe signal
+                let isRisk = false;
+                if (nameKey.includes('length') && val > 50) isRisk = true;
+                if (nameKey.includes('dots') && val > 2) isRisk = true;
+                if (nameKey.includes('suspicious') && val > 0) isRisk = true;
+                if (nameKey.includes('ip') && val === 1) isRisk = true;
+                if (nameKey.includes('depth') && val > 2) isRisk = true;
+                if (nameKey.includes('https') && val === 0) isRisk = true;
+                if (nameKey.includes('digits') && val > 0) isRisk = true;
+                if (isPhishing && parseFloat(imp) > 5.0) isRisk = true;
+                
+                if (isRisk) {
+                    topRiskHTML += `
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 600; display: flex; align-items: center;">
+                                <i data-lucide="alert-triangle" style="width: 14px; height: 14px; color: var(--accent-orange); margin-right: 6px;"></i> 
+                                ${dictEntry.label} 
+                                <span style="color: var(--accent-orange); font-size: 0.8rem; margin-left: 6px;">(+${imp}%)</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-left: 20px; margin-top: 4px; line-height: 1.4;">
+                                ${dictEntry.why}
+                            </div>
+                        </div>`;
+                } else if (!isRisk && !isPhishing) {
+                    // Override label for positive signals where the feature is absent
+                    let safeWhy = 'This structural feature is consistent with legitimate domains.';
+                    if (nameKey.includes('https') && val === 1) safeWhy = 'The URL uses secure HTTP communication, standard for legitimate sites.';
+                    if (nameKey.includes('ip') && val === 0) safeWhy = 'Uses a standard registered domain name instead of a suspicious raw IP.';
+                    if (nameKey.includes('suspicious') && val === 0) safeWhy = 'No known phishing or deceptive keywords were detected in the URL.';
+
+                    topSafeHTML += `
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-size: 0.9rem; color: var(--text-light); font-weight: 600; display: flex; align-items: center;">
+                                <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--accent-green); margin-right: 6px;"></i> 
+                                ${dictEntry.label.replace('Missing ', '').replace('Excessive ', 'Normal ')} 
+                                <span style="color: var(--accent-green); font-size: 0.8rem; margin-left: 6px;">(-${imp}%)</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-left: 20px; margin-top: 4px; line-height: 1.4;">
+                                ${safeWhy}
+                            </div>
+                        </div>`;
+                }
             });
+            
+            if (!topRiskHTML) topRiskHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">No major risk indicators found.</div>';
+            if (!topSafeHTML) topSafeHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">No strong positive trust signals found.</div>';
+
+            explainGrid.innerHTML = `
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-orange);">
+                    <h5 style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">Top Risk Contributors</h5>
+                    ${topRiskHTML}
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                    <h5 style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">Positive Trust Signals</h5>
+                    ${topSafeHTML}
+                </div>
+            `;
+        }
+
+        // Structured Feature Grid
+        if (structuredGrid && data.all_features) {
+            const groups = {
+                'Structure Analysis': ['Url Length', 'Domain Length', 'Path Length', 'Url Depth', 'Num Subdomains', 'Num Query Params'],
+                'Security & Keywords': ['Uses Https', 'Has Ip Address', 'Num Suspicious Keywords', 'Has Suspicious Tld', 'Has Port'],
+                'Complexity Analysis': ['Url Entropy', 'Domain Entropy', 'Num Digits', 'Num Special Chars', 'Num Slashes', 'Num Dots']
+            };
+            
+            let structuredHTML = '';
+            for (const [groupName, featureList] of Object.entries(groups)) {
+                let itemsHTML = '';
+                featureList.forEach(key => {
+                    const actualKey = Object.keys(data.all_features).find(k => k.toLowerCase() === key.toLowerCase());
+                    if (actualKey) {
+                        const val = data.all_features[actualKey];
+                        itemsHTML += `
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0; font-size: 0.85rem;">
+                                <span style="color: var(--text-muted);">${actualKey}</span>
+                                <strong style="color: var(--text-light);">${typeof val === 'number' && !Number.isInteger(val) ? val.toFixed(2) : val}</strong>
+                            </div>
+                        `;
+                    }
+                });
+                
+                if (itemsHTML) {
+                    structuredHTML += `
+                        <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h5 style="color: var(--accent-cyan); margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(0,229,160,0.2); padding-bottom: 8px;">${groupName}</h5>
+                            ${itemsHTML}
+                        </div>
+                    `;
+                }
+            }
+            structuredGrid.innerHTML = structuredHTML;
         }
 
         // Re-initialize Lucide icons for new elements
@@ -479,15 +603,33 @@ class URLScanner {
             top_features: [
                 { name: 'URL Length', importance: 18.5, value: url.length },
                 { name: 'Num Dots', importance: 14.2, value: (url.match(/\./g) || []).length },
-                { name: 'Suspicious TLD', importance: 12.8, value: (urlLower.includes('.tk') || urlLower.includes('.ml')) ? 1 : 0 },
+                { name: 'Has Suspicious TLD', importance: 12.8, value: (urlLower.includes('.tk') || urlLower.includes('.ml')) ? 1 : 0 },
                 { name: 'Uses HTTPS', importance: 11.3, value: url.startsWith('https') ? 1 : 0 },
                 { name: 'Num Hyphens', importance: 9.7, value: (url.match(/-/g) || []).length },
                 { name: 'Has @ Symbol', importance: 8.5, value: url.includes('@') ? 1 : 0 },
-                { name: 'Subdomains', importance: 7.2, value: Math.max(0, url.split('.').length - 2) },
+                { name: 'Num Subdomains', importance: 7.2, value: Math.max(0, url.split('.').length - 2) },
                 { name: 'URL Entropy', importance: 6.8, value: 3.8 },
                 { name: 'Has IP Address', importance: 5.9, value: /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(url) ? 1 : 0 },
-                { name: 'Suspicious Words', importance: 5.1, value: suspicious ? 2 : 0 },
+                { name: 'Num Suspicious Keywords', importance: 5.1, value: suspicious ? 2 : 0 },
             ],
+            all_features: {
+                'Url Length': url.length,
+                'Domain Length': 15,
+                'Path Length': 10,
+                'Url Depth': (url.match(/\//g) || []).length > 2 ? (url.match(/\//g) || []).length - 2 : 0,
+                'Num Subdomains': Math.max(0, url.split('.').length - 2),
+                'Num Query Params': url.includes('?') ? 1 : 0,
+                'Uses Https': url.startsWith('https') ? 1 : 0,
+                'Has Ip Address': /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(url) ? 1 : 0,
+                'Num Suspicious Keywords': suspicious ? 1 : 0,
+                'Has Suspicious Tld': (urlLower.includes('.tk') || urlLower.includes('.ml')) ? 1 : 0,
+                'Url Entropy': 3.84,
+                'Domain Entropy': 3.2,
+                'Num Digits': (url.match(/\d/g) || []).length,
+                'Num Special Chars': 2,
+                'Num Slashes': (url.match(/\//g) || []).length,
+                'Num Dots': (url.match(/\./g) || []).length
+            }
         };
         this.showResult(demoData);
     }

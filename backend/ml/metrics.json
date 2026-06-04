@@ -1,51 +1,51 @@
 {
   "model_results": {
     "Random Forest": {
-      "accuracy": 90.4,
-      "precision": 91.5,
-      "recall": 86.5,
-      "f1_score": 88.9,
+      "accuracy": 90.9,
+      "precision": 91.3,
+      "recall": 88.4,
+      "f1_score": 89.8,
       "confusion_matrix": {
-        "true_negative": 234,
-        "false_positive": 16,
-        "false_negative": 27,
-        "true_positive": 173
+        "true_negative": 277,
+        "false_positive": 21,
+        "false_negative": 29,
+        "true_positive": 221
       }
     },
     "Decision Tree": {
-      "accuracy": 88.7,
-      "precision": 90.3,
-      "recall": 83.5,
-      "f1_score": 86.8,
+      "accuracy": 87.6,
+      "precision": 89.2,
+      "recall": 82.8,
+      "f1_score": 85.9,
       "confusion_matrix": {
-        "true_negative": 232,
-        "false_positive": 18,
-        "false_negative": 33,
-        "true_positive": 167
+        "true_negative": 273,
+        "false_positive": 25,
+        "false_negative": 43,
+        "true_positive": 207
       }
     },
     "Naive Bayes": {
-      "accuracy": 54.2,
-      "precision": 49.3,
-      "recall": 100.0,
-      "f1_score": 66.0,
+      "accuracy": 51.5,
+      "precision": 48.4,
+      "recall": 98.4,
+      "f1_score": 64.9,
       "confusion_matrix": {
-        "true_negative": 44,
-        "false_positive": 206,
-        "false_negative": 0,
-        "true_positive": 200
+        "true_negative": 36,
+        "false_positive": 262,
+        "false_negative": 4,
+        "true_positive": 246
       }
     },
     "Logistic Regression": {
-      "accuracy": 86.4,
-      "precision": 88.8,
-      "recall": 79.5,
-      "f1_score": 83.9,
+      "accuracy": 86.7,
+      "precision": 88.0,
+      "recall": 82.0,
+      "f1_score": 84.9,
       "confusion_matrix": {
-        "true_negative": 230,
-        "false_positive": 20,
-        "false_negative": 41,
-        "true_positive": 159
+        "true_negative": 270,
+        "false_positive": 28,
+        "false_negative": 45,
+        "true_positive": 205
       }
     }
   },
@@ -82,12 +82,12 @@
     "url_depth"
   ],
   "dataset_stats": {
-    "total_samples": 2247,
-    "phishing_urls": 998,
-    "legitimate_urls": 1249,
+    "total_samples": 2737,
+    "phishing_urls": 1248,
+    "legitimate_urls": 1489,
     "training_split": "80% / 20%",
     "cross_validation": "10-fold"
   },
   "best_model": "Random Forest",
-  "best_accuracy": 90.4
+  "best_accuracy": 90.9
 }

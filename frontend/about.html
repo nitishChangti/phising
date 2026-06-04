@@ -70,8 +70,8 @@
                     How <span class="text-gradient">PhishShield AI</span> Works
                 </h2>
                 <p class="section-subtitle">
-                    A four-stage intelligent pipeline from raw URL to accurate phishing<br>
-                    classification — built on IEEE research and modern ML.
+                    A four-stage intelligent pipeline from raw URL to phishing<br>
+                    classification, inspired by IEEE research and implemented with modern ML.
                 </p>
             </div>
 
@@ -92,7 +92,7 @@
                         <i data-lucide="settings" class="step-lucide"></i>
                     </div>
                     <h4 class="step-title">Feature Extraction</h4>
-                    <p class="step-desc">30+ features extracted from URL structure, domain records, and HTML/JS content.</p>
+                    <p class="step-desc">30 URL-based lexical and structural features are extracted from the submitted address.</p>
                 </div>
                 <div class="pipeline-line"></div>
                 <div class="pipeline-step">
@@ -101,7 +101,7 @@
                         <i data-lucide="cpu" class="step-lucide"></i>
                     </div>
                     <h4 class="step-title">ML Model Processing</h4>
-                    <p class="step-desc">Random Forest ensemble model classifies the feature vector with 97.3% accuracy.</p>
+                    <p class="step-desc">Random Forest ensemble model classifies the feature vector with 90.9% current accuracy.</p>
                 </div>
                 <div class="pipeline-line"></div>
                 <div class="pipeline-step">
@@ -131,8 +131,8 @@
                             </defs>
                         </svg>
                         <div class="rf-center-text">
-                            <span class="rf-percentage">97.3%</span>
-                            <span class="rf-sublabel">RF Accuracy</span>
+                            <span class="rf-percentage">90.9%</span>
+                            <span class="rf-sublabel">Our RF Accuracy</span>
                         </div>
                     </div>
                 </div>
@@ -154,6 +154,20 @@
                         <li><i data-lucide="check" class="rf-check-lucide"></i> 10-fold cross-validated for reliability</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <!-- Model Limitations -->
+        <div class="container" style="margin-top: 60px;">
+            <div class="results-card animate-on-scroll">
+                <h3 class="card-label">MODEL LIMITATIONS & FUTURE SCOPE</h3>
+                <p class="rf-desc" style="margin-top: 15px; color: var(--text-muted);">
+                    While this project implements the core URL lexical analysis from the IEEE methodology, there are known limitations in the current prototype:
+                </p>
+                <ul class="rf-features" style="margin-top: 15px;">
+                    <li><i data-lucide="alert-circle" class="rf-check-lucide" style="color: var(--accent-orange);"></i> <strong>False Positives:</strong> Some legitimate URLs containing complex paths, subdomains, or numerical parameters may be classified as phishing due to the lexical nature of the feature extraction.</li>
+                    <li><i data-lucide="alert-circle" class="rf-check-lucide" style="color: var(--accent-orange);"></i> <strong>Future Work:</strong> To reach production-level reliability, future iterations should include domain reputation analysis (WHOIS), SSL validation, DNS records, and content-based feature extraction (HTML/JS parsing).</li>
+                </ul>
             </div>
         </div>
     </section>

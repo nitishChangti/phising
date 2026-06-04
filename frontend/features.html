@@ -68,102 +68,180 @@
             <div class="section-header animate-on-scroll">
                 <div class="section-badge">
                     <span class="badge-dot"></span>
-                    IEEE-BASED FEATURE EXTRACTION
+                    ACTIVE CAPABILITIES
                 </div>
                 <h2 class="section-title">
-                    30+ Features Extracted <span class="text-gradient">Automatically</span>
+                    Currently Implemented <span class="text-gradient">Features</span>
                 </h2>
                 <p class="section-subtitle">
-                    Our system analyzes URL structure, domain properties, and content-based indicators to identify phishing attempts.
+                    The system extracts 15 robust URL-based lexical and structural features for real-time phishing detection.
                 </p>
             </div>
 
-            <!-- Feature Cards Grid -->
+            <!-- Current Features Grid -->
             <div class="features-grid">
-                <!-- Column 1: URL-Based -->
+                <!-- Column 1 -->
                 <div class="feature-column feature-column-cyan animate-on-scroll">
                     <div class="feature-card">
                         <div class="feature-dot dot-cyan"></div>
                         <h4 class="feature-name">IP Address in URL</h4>
-                        <p class="feature-desc">Using an IP instead of domain name is a strong phishing indicator.</p>
+                        <p class="feature-desc">Using an IP instead of a domain name is a strong phishing indicator.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-cyan"></div>
-                        <h4 class="feature-name">@ Symbol Presence</h4>
-                        <p class="feature-desc">The @ symbol in URLs forces browsers to ignore everything before it.</p>
+                        <h4 class="feature-name">URL Length</h4>
+                        <p class="feature-desc">Abnormally long URLs are often used to hide suspicious parts.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-cyan"></div>
-                        <h4 class="feature-name">Hyphens in Domain</h4>
-                        <p class="feature-desc">Domains with multiple hyphens often mimic legitimate sites.</p>
+                        <h4 class="feature-name">Domain Length</h4>
+                        <p class="feature-desc">Unusual domain length can indicate auto-generated or malicious domains.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-cyan"></div>
-                        <h4 class="feature-name">HTTPS Protocol</h4>
-                        <p class="feature-desc">Absence of HTTPS suggests an insecure or spoofed connection.</p>
+                        <h4 class="feature-name">Path Length</h4>
+                        <p class="feature-desc">Deep and complex URL paths can be a sign of obfuscation.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-cyan"></div>
-                        <h4 class="feature-name">Special Characters</h4>
-                        <p class="feature-desc">High count of special chars in URL path signals obfuscation attempts.</p>
+                        <h4 class="feature-name">URL Depth</h4>
+                        <p class="feature-desc">Counts the number of sub-directories in the URL path.</p>
                     </div>
                 </div>
 
-                <!-- Column 2: Domain-Based -->
+                <!-- Column 2 -->
                 <div class="feature-column feature-column-orange animate-on-scroll" style="animation-delay: 0.15s;">
                     <div class="feature-card">
                         <div class="feature-dot dot-orange"></div>
-                        <h4 class="feature-name">DNS Record</h4>
-                        <p class="feature-desc">Absence of DNS records is a strong sign of a fraudulent domain.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-dot dot-orange"></div>
-                        <h4 class="feature-name">Website Traffic</h4>
-                        <p class="feature-desc">Alexa rank > 100,000 or no rank may indicate low-traffic phishing sites.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-dot dot-orange"></div>
-                        <h4 class="feature-name">Sub-domain Depth</h4>
+                        <h4 class="feature-name">Subdomains</h4>
                         <p class="feature-desc">Multiple sub-domain levels are used to mimic legitimate URLs.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-orange"></div>
-                        <h4 class="feature-name">Domain Registrar</h4>
-                        <p class="feature-desc">Certain low-cost/free registrars are disproportionately used by phishers.</p>
+                        <h4 class="feature-name">HTTPS Usage</h4>
+                        <p class="feature-desc">Checks for secure protocol; absence suggests an insecure connection.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-orange"></div>
-                        <h4 class="feature-name">SSL Certificate Age</h4>
-                        <p class="feature-desc">Very recently issued SSL certs correlate with newly created phishing sites.</p>
+                        <h4 class="feature-name">Special Characters</h4>
+                        <p class="feature-desc">High count of special chars signals potential obfuscation attempts.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Suspicious Keywords</h4>
+                        <p class="feature-desc">Detects words like 'login', 'update', or 'secure' often used in phishing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">URL Entropy</h4>
+                        <p class="feature-desc">Measures the randomness of characters in the entire URL.</p>
                     </div>
                 </div>
 
-                <!-- Column 3: Content-Based -->
+                <!-- Column 3 -->
                 <div class="feature-column feature-column-purple animate-on-scroll" style="animation-delay: 0.3s;">
                     <div class="feature-card">
                         <div class="feature-dot dot-purple"></div>
-                        <h4 class="feature-name">JavaScript Pop-ups</h4>
-                        <p class="feature-desc">Excessive pop-up windows are used to harvest credentials deceptively.</p>
+                        <h4 class="feature-name">Domain Entropy</h4>
+                        <p class="feature-desc">Calculates randomness specifically within the domain portion.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-purple"></div>
                         <h4 class="feature-name">Redirect Count</h4>
-                        <p class="feature-desc">Multiple redirections obscure the final malicious destination URL.</p>
+                        <p class="feature-desc">Multiple redirections obscure the final malicious destination.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-purple"></div>
-                        <h4 class="feature-name">Right-click Disabled</h4>
-                        <p class="feature-desc">Disabling right-click prevents source inspection of phishing pages.</p>
+                        <h4 class="feature-name">Hyphen Analysis</h4>
+                        <p class="feature-desc">Domains with multiple hyphens often mimic legitimate sites.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-purple"></div>
-                        <h4 class="feature-name">External Resources</h4>
-                        <p class="feature-desc">High ratio of external assets points to a cloned website structure.</p>
+                        <h4 class="feature-name">@ Symbol Detection</h4>
+                        <p class="feature-desc">Forces browsers to ignore everything before it, masking the real domain.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-dot dot-purple"></div>
-                        <h4 class="feature-name">Form Action URL</h4>
-                        <p class="feature-desc">Forms posting to a different domain than the page reveal data theft.</p>
+                        <h4 class="feature-name">Numeric Character Analysis</h4>
+                        <p class="feature-desc">Anomalous numbers of digits can indicate machine-generated URLs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header animate-on-scroll" style="margin-top: 100px;">
+                <div class="section-badge">
+                    <span class="badge-dot" style="background: var(--accent-purple); box-shadow: 0 0 8px rgba(168,85,247,0.3);"></span>
+                    FUTURE ROADMAP
+                </div>
+                <h2 class="section-title">
+                    IEEE Future <span class="text-gradient">Enhancements</span>
+                </h2>
+                <p class="section-subtitle">
+                    Advanced analytical checks and content-based features planned for future development based on the IEEE methodology.
+                </p>
+            </div>
+
+            <!-- Future Features Grid -->
+            <div class="features-grid" style="opacity: 0.85;">
+                <!-- Column 1 -->
+                <div class="feature-column feature-column-cyan animate-on-scroll">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">DNS Record Validation</h4>
+                        <p class="feature-desc">Validating the existence and reliability of the domain's DNS records.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">WHOIS Analysis</h4>
+                        <p class="feature-desc">Extracting registrar information and checking registration anomalies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-cyan"></div>
+                        <h4 class="feature-name">Domain Age Verification</h4>
+                        <p class="feature-desc">Newly registered domains have a higher probability of being malicious.</p>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="feature-column feature-column-orange animate-on-scroll" style="animation-delay: 0.1s;">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">SSL Certificate Analysis</h4>
+                        <p class="feature-desc">Evaluating certificate issuer, age, and expiry validity.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Website Traffic Ranking</h4>
+                        <p class="feature-desc">Utilizing global traffic metrics to determine domain reputation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Search Engine Indexing</h4>
+                        <p class="feature-desc">Checking if the URL is indexed by major search engines.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-orange"></div>
+                        <h4 class="feature-name">Iframe Detection</h4>
+                        <p class="feature-desc">Detecting hidden iframes used to invisibly load malicious content.</p>
+                    </div>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="feature-column feature-column-purple animate-on-scroll" style="animation-delay: 0.2s;">
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">Form Action Analysis</h4>
+                        <p class="feature-desc">Verifying if forms submit data to suspicious or external destinations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">JavaScript Behavior Analysis</h4>
+                        <p class="feature-desc">Inspecting page scripts for obfuscated code or right-click disabling.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-dot dot-purple"></div>
+                        <h4 class="feature-name">External Resource Analysis</h4>
+                        <p class="feature-desc">Calculating the ratio of external assets to internal assets on the page.</p>
                     </div>
                 </div>
             </div>
@@ -173,29 +251,29 @@
                 <div class="fstat-card">
                     <div class="fstat-icon fstat-icon-cyan"><i data-lucide="layout-grid" class="fstat-lucide"></i></div>
                     <div class="fstat-info">
-                        <span class="fstat-value">30+</span>
-                        <span class="fstat-label">Total Features</span>
+                        <span class="fstat-value">15+</span>
+                        <span class="fstat-label">Active Features</span>
                     </div>
                 </div>
                 <div class="fstat-card">
                     <div class="fstat-icon fstat-icon-green"><i data-lucide="layers" class="fstat-lucide"></i></div>
                     <div class="fstat-info">
                         <span class="fstat-value">3</span>
-                        <span class="fstat-label">Feature Categories</span>
+                        <span class="fstat-label">Display Groups</span>
                     </div>
                 </div>
                 <div class="fstat-card">
                     <div class="fstat-icon fstat-icon-yellow"><i data-lucide="zap" class="fstat-lucide"></i></div>
                     <div class="fstat-info">
                         <span class="fstat-value">&lt; 200ms</span>
-                        <span class="fstat-label">Extraction Time</span>
+                        <span class="fstat-label">URL Extraction Time</span>
                     </div>
                 </div>
                 <div class="fstat-card">
                     <div class="fstat-icon fstat-icon-purple"><i data-lucide="book-open" class="fstat-lucide"></i></div>
                     <div class="fstat-info">
                         <span class="fstat-value">IEEE</span>
-                        <span class="fstat-label">Research Basis</span>
+                        <span class="fstat-label">Inspired Methodology</span>
                     </div>
                 </div>
             </div>

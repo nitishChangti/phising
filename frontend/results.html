@@ -89,13 +89,13 @@
                                 <span class="algo-dot algo-dot-green"></span>
                                 <span class="algo-name">Random Forest</span>
                                 <span class="algo-best-badge">Best</span>
-                                <span class="algo-accuracy" id="rf-accuracy">97.3%</span>
+                                <span class="algo-accuracy" id="rf-accuracy">90.9%</span>
                             </div>
-                            <div class="algo-bar"><div class="algo-fill algo-fill-green" data-width="97.3" style="width: 0%"></div></div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-green" data-width="90.9" style="width: 0%"></div></div>
                             <div class="algo-sub-metrics">
-                                <div class="sub-metric"><span class="sub-value" id="rf-precision">96.8%</span><span class="sub-label">Precision</span></div>
-                                <div class="sub-metric"><span class="sub-value" id="rf-recall">97.1%</span><span class="sub-label">Recall</span></div>
-                                <div class="sub-metric"><span class="sub-value" id="rf-f1">96.9%</span><span class="sub-label">F1 Score</span></div>
+                                <div class="sub-metric"><span class="sub-value" id="rf-precision">91.3%</span><span class="sub-label">Precision</span></div>
+                                <div class="sub-metric"><span class="sub-value" id="rf-recall">88.4%</span><span class="sub-label">Recall</span></div>
+                                <div class="sub-metric"><span class="sub-value" id="rf-f1">89.8%</span><span class="sub-label">F1 Score</span></div>
                             </div>
                         </div>
 
@@ -103,27 +103,27 @@
                             <div class="algo-header">
                                 <span class="algo-dot algo-dot-orange"></span>
                                 <span class="algo-name">Decision Tree</span>
-                                <span class="algo-accuracy" id="dt-accuracy">93.1%</span>
+                                <span class="algo-accuracy" id="dt-accuracy">87.6%</span>
                             </div>
-                            <div class="algo-bar"><div class="algo-fill algo-fill-orange" data-width="93.1" style="width: 0%"></div></div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-orange" data-width="87.6" style="width: 0%"></div></div>
                         </div>
 
                         <div class="algo-row">
                             <div class="algo-header">
                                 <span class="algo-dot algo-dot-pink"></span>
                                 <span class="algo-name">Naive Bayes</span>
-                                <span class="algo-accuracy" id="nb-accuracy">88.4%</span>
+                                <span class="algo-accuracy" id="nb-accuracy">51.5%</span>
                             </div>
-                            <div class="algo-bar"><div class="algo-fill algo-fill-pink" data-width="88.4" style="width: 0%"></div></div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-pink" data-width="51.5" style="width: 0%"></div></div>
                         </div>
 
                         <div class="algo-row">
                             <div class="algo-header">
                                 <span class="algo-dot algo-dot-blue"></span>
                                 <span class="algo-name">Logistic Reg.</span>
-                                <span class="algo-accuracy" id="lr-accuracy">91.2%</span>
+                                <span class="algo-accuracy" id="lr-accuracy">86.7%</span>
                             </div>
-                            <div class="algo-bar"><div class="algo-fill algo-fill-blue" data-width="91.2" style="width: 0%"></div></div>
+                            <div class="algo-bar"><div class="algo-fill algo-fill-blue" data-width="86.7" style="width: 0%"></div></div>
                         </div>
                     </div>
 
@@ -144,7 +144,7 @@
                             </div>
                             <div class="feature-importance-row">
                                 <div class="fi-header">
-                                    <span class="fi-name">SSL State</span>
+                                    <span class="fi-name">Domain Length</span>
                                     <span class="fi-pct">15.2%</span>
                                 </div>
                                 <div class="fi-bar"><div class="fi-fill" style="width: 15.2%"></div></div>
@@ -203,7 +203,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="cm-overall" style="margin-top: 15px;">Overall Accuracy: <span class="text-gradient" id="cm-overall">97.3%</span></div>
+                        <div class="cm-overall" style="margin-top: 15px;">Our Model Accuracy: <span class="text-gradient" id="cm-overall">90.9%</span></div>
                     </div>
 
                     <div class="results-card">
@@ -240,8 +240,8 @@
                                 </defs>
                             </svg>
                             <div class="roc-auc-badge" style="background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); border-radius: 8px; padding: 10px 18px; text-align: center; width: 100%;">
-                                <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">AUC = 0.987</div>
-                                <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">Area Under Curve</div>
+                                <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">ROC-AUC</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">Future Metric Export</div>
                             </div>
                         </div>
                     </div>
@@ -249,9 +249,9 @@
                     <div class="results-card">
                         <h3 class="card-label">DATASET STATISTICS</h3>
                         <div class="ds-stats">
-                            <div class="ds-row"><div class="ds-icon-wrap"><i data-lucide="file-text" class="ds-lucide"></i></div><span class="ds-name">Total Samples</span><span class="ds-value" id="ds-total">11,055</span></div>
-                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-red"><i data-lucide="fish" class="ds-lucide"></i></div><span class="ds-name">Phishing URLs</span><span class="ds-value" id="ds-phishing">4,898</span></div>
-                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-green"><i data-lucide="check-circle-2" class="ds-lucide"></i></div><span class="ds-name">Legitimate URLs</span><span class="ds-value" id="ds-legitimate">6,157</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap"><i data-lucide="file-text" class="ds-lucide"></i></div><span class="ds-name">Total Samples</span><span class="ds-value" id="ds-total">2,737</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-red"><i data-lucide="fish" class="ds-lucide"></i></div><span class="ds-name">Phishing URLs</span><span class="ds-value" id="ds-phishing">1,248</span></div>
+                            <div class="ds-row"><div class="ds-icon-wrap ds-icon-green"><i data-lucide="check-circle-2" class="ds-lucide"></i></div><span class="ds-name">Legitimate URLs</span><span class="ds-value" id="ds-legitimate">1,489</span></div>
                             <div class="ds-row"><div class="ds-icon-wrap ds-icon-blue"><i data-lucide="split" class="ds-lucide"></i></div><span class="ds-name">Training Split</span><span class="ds-value">80% / 20%</span></div>
                             <div class="ds-row"><div class="ds-icon-wrap ds-icon-purple"><i data-lucide="repeat-2" class="ds-lucide"></i></div><span class="ds-name">Cross Validation</span><span class="ds-value">10-fold</span></div>
                         </div>
@@ -263,23 +263,23 @@
             <div class="results-bottom-stats animate-on-scroll">
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-green"><i data-lucide="shield-check" class="rb-lucide"></i></div>
-                    <div class="rb-value">97.3%</div>
-                    <div class="rb-label">Accuracy</div>
+                    <div class="rb-value">90.9%</div>
+                    <div class="rb-label">Our Accuracy</div>
                 </div>
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-cyan"><i data-lucide="crosshair" class="rb-lucide"></i></div>
-                    <div class="rb-value">96.8%</div>
+                    <div class="rb-value">91.3%</div>
                     <div class="rb-label">Precision</div>
                 </div>
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-purple"><i data-lucide="bar-chart-3" class="rb-lucide"></i></div>
-                    <div class="rb-value">97.1%</div>
+                    <div class="rb-value">88.4%</div>
                     <div class="rb-label">Recall</div>
                 </div>
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-orange"><i data-lucide="trending-up" class="rb-lucide"></i></div>
-                    <div class="rb-value">96.9%</div>
-                    <div class="rb-label">F1 Score</div>
+                    <div class="rb-value">97.31%</div>
+                    <div class="rb-label">IEEE Paper RF</div>
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
 # 🛡️ PhishShield AI: ML-Powered Phishing Detection System
 
-PhishShield AI is an intelligent cybersecurity application designed to detect fraudulent (phishing) websites in real-time. By applying supervised machine learning algorithms to structural, lexical, and behavioral properties of a URL, the system classifies URLs as either **Legitimate** or **Phishing** with high precision.
+PhishShield AI is an IEEE-inspired, URL-based cybersecurity application designed to detect fraudulent (phishing) websites in real time. By applying supervised machine learning algorithms to lexical and structural properties of a URL, the system classifies URLs as either **Legitimate** or **Phishing** with high precision.
 
-This system is built on **IEEE research methodology**, mapping raw strings into a 30-feature vector which is evaluated by a trained **Random Forest Classifier**.
+This system is inspired by **IEEE phishing-detection methodology**, mapping raw URL strings into a 30-feature vector which is evaluated by a trained **Random Forest Classifier**. Advanced IEEE features such as WHOIS, DNS reputation, SSL certificate inspection, page-content analysis, and NLP are documented as future enhancements.
 
 ---
 
@@ -28,15 +28,15 @@ https://  subdomain.  domain.com  /path/to/page  ?query=params
 How does an AI distinguish a safe link from a malicious one?
 Instead of using manual rules (like "if the link contains 'secure', it is phishing" — which would flag a safe URL like `github.com/secure`), we use **Supervised Machine Learning**.
 
-1. **Feature Extraction**: We turn the URL string into a list of **30 numbers** representing its structure (e.g., URL length, number of dots, presence of "@" symbol, domain age).
-2. **The Training Phase**: We feed a model thousands of labeled examples (e.g., 5,000 known safe URLs and 5,000 known phishing URLs). The model studies the relationship between the 30 numbers and the labels.
+1. **Feature Extraction**: We turn the URL string into a list of **30 numbers** representing its structure (e.g., URL length, number of dots, presence of "@" symbol, HTTPS usage, subdomain count, and suspicious keywords).
+2. **The Training Phase**: We feed the model a labeled dataset containing legitimate and phishing URLs. The model studies the relationship between the 30 extracted features and the labels.
 3. **The Prediction Phase**: When a user inputs a new URL, the model converts it to those 30 numbers and estimates the probability of it being phishing.
 
 ### 3. Understanding the Random Forest Model
 This project evaluates multiple algorithms, but relies on **Random Forest** for its core engine. 
 * Imagine a single **Decision Tree** as a flowchart of questions (e.g., *Is the URL length > 54? Yes ➡️ Is there an @ symbol? No ➡️ Legitimate*). A single tree is prone to errors (overfitting).
 * A **Random Forest** is an ensemble of **100 independent decision trees**. Each tree makes its own prediction.
-* The final result is decided by **majority vote**. If 95 trees vote "Legitimate" and 5 vote "Phishing," the URL is classified as legitimate with **95% confidence**.
+* The final result is decided by aggregating the predictions across the trees. The proportion of trees voting for a class serves as a reliable estimate for the model's **prediction confidence**.
 
 ### 4. Metrics: How We Measure Success
 * **Accuracy**: The percentage of overall correct predictions.
@@ -65,9 +65,30 @@ graph TD
     C -->|JSON Payload| B
 ```
 
+### Workflow Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend (Django)
+    participant FeatureExtractor
+    participant ML_Model (Random Forest)
+    
+    User->>Frontend: Enters URL to scan
+    Frontend->>Backend (Django): POST /api/predict/ {url}
+    Backend (Django)->>FeatureExtractor: extract_features(url)
+    FeatureExtractor-->>Backend (Django): Returns 30-feature vector
+    Backend (Django)->>ML_Model (Random Forest): predict(vector) & predict_proba(vector)
+    ML_Model (Random Forest)-->>Backend (Django): Returns class (0 or 1) & confidence %
+    Backend (Django)->>Backend (Django): Save to SQLite Database (Scan History)
+    Backend (Django)-->>Frontend: JSON response (risk level, confidence, features)
+    Frontend-->>User: Displays result UI (Safe/Warning/Danger)
+```
+
 * **Frontend**: Responsive, modern multipage interface built with CSS variables, custom particle rendering, dynamic metrics charts (Confusion Matrix, Feature Importance, ROC Curve), and DOM manipulation (housed in `frontend/`).
 * **API Layer**: Django REST Framework endpoints for URL scans, model statistics, and retrieving persistent scan history from SQLite (housed in `backend/api/`).
-* **ML Layer**: Scikit-Learn pipeline using Random Forest (achieving 97.3% accuracy) and Decision Tree, optimized via 10-fold cross-validation and serialized as binary structures (`.pkl`) for sub-millisecond inference.
+* **ML Layer**: Scikit-Learn pipeline using Random Forest (our trained model accuracy: **90.9%**) and Decision Tree, optimized via 10-fold cross-validation and serialized as binary structures (`.pkl`) for fast inference. Note: The reference IEEE paper reported **97.31%** for their Random Forest experiment, which utilized a broader set of features (including WHOIS and content analysis) and a different dataset.
 * **Database Layer**: SQLite database using Django ORM to persistently store scan details (`URLScan` model), including URLs, predictions, confidences, risk levels, and timestamps.
 
 ---
@@ -177,14 +198,16 @@ The server will boot at **`http://127.0.0.1:8000/`**. Because Django settings ar
 ---
 
 ## 📊 Feature Extraction Pipeline
-The `FeatureExtractor` class converts a URL string into a 30-dimensional array. Key indicators extracted include:
+The `FeatureExtractor` class converts a URL string into a 30-dimensional array. The current implementation focuses on URL-based lexical and structural indicators:
 
 | Feature Category | Features | Description |
 | :--- | :--- | :--- |
-| **Lexical** | `having_IP_Address`, `URL_Length`, `Shortening_Service`, `having_At_Symbol`, `double_slash_redirecting`, `Prefix_Suffix`, `having_Sub_Domain` | Analyzes structural patterns, lengths, and deceptive characters within the URL string. |
-| **Security** | `SSL_State`, `Domain_Registeration_Length`, `Favicon`, `port`, `HTTPS_token` | Assesses SSL validity, domain age, registrar duration, and port access safety. |
-| **Behavioral** | `Request_URL`, `URL_of_Anchor`, `Links_in_tags`, `SFH` (Server Form Handler), `Submitting_to_email`, `Abnormal_URL` | Inspects how the page handles resources, form submittals, and anchor redirections. |
-| **Domain Authority** | `Redirect`, `on_mouseover` status, `RightClick` disabled, `popUpWidnow`, `Iframe`, `age_of_domain`, `DNSRecord`, `web_traffic`, `Page_Rank`, `Google_Index`, `Links_pointing_to_page`, `Statistical_report` | Gathers external popularity, DNS health status, and typical malware attributes. |
+| **Length & Structure** | `url_length`, `domain_length`, `path_length`, `url_depth`, `query_length`, `num_query_params` | Measures how large, nested, and parameter-heavy the URL is. |
+| **Character Patterns** | `num_dots`, `num_hyphens`, `num_underscores`, `num_slashes`, `num_query_marks`, `num_ampersands`, `num_equals`, `num_digits`, `num_special_chars` | Detects obfuscation and unusual URL composition. |
+| **Suspicious URL Signals** | `has_at_symbol`, `has_ip_address`, `uses_https`, `num_subdomains`, `has_suspicious_tld`, `is_shortened`, `has_redirect`, `path_double_slash`, `has_fragment` | Captures common address-bar phishing indicators from the IEEE methodology. |
+| **Lexical Risk** | `url_entropy`, `domain_entropy`, `num_suspicious_keywords`, `domain_has_numbers`, `num_digits_domain`, `has_port` | Identifies randomness, brand-abuse keywords, numeric domains, and uncommon port usage. |
+
+Future scope from the IEEE methodology includes WHOIS/domain age, DNS record checks, SSL certificate details, website traffic, Google indexing, PageRank, HTML/JavaScript analysis, and NLP-based content analysis.
 
 ---
 
@@ -192,7 +215,25 @@ The `FeatureExtractor` class converts a URL string into a 30-dimensional array. 
 
 During training, the dataset is evaluated across four major machine learning models. Random Forest outperforms other classifiers due to its ensemble voting logic:
 
-* **Random Forest Classifier**: **97.3%** Accuracy (Serialized and used for live predictions)
-* **Decision Tree Classifier**: **93.1%** Accuracy
-* **Logistic Regression**: **91.2%** Accuracy
-* **Naive Bayes Classifier**: **88.4%** Accuracy
+* **Random Forest Classifier**: **90.9%** Accuracy (Serialized and used for live predictions)
+* **Decision Tree Classifier**: **87.6%** Accuracy
+* **Logistic Regression**: **86.7%** Accuracy
+* **Naive Bayes Classifier**: **51.5%** Accuracy
+
+---
+
+## ⚠️ Model Limitations & Future Scope
+
+While this project successfully implements the core machine learning pipeline proposed in the IEEE paper, it is a prototype focused strictly on **URL-based lexical and structural features**. 
+
+### Current Limitations
+1. **False Positives on Complex Paths:** Some legitimate URLs containing complex paths, subdomains, or numerical parameters (e.g., `https://mail.google.com/mail/u/0/`) may be falsely classified as phishing. This is due to the lexical nature of the feature extraction process and the fact that the current training dataset primarily consists of simple root domains for legitimate sites.
+2. **Brand Keyword Overlap:** Legitimate URLs belonging to major brands (like Google or PayPal) might be penalized because those keywords are commonly used by phishers to spoof domains. 
+
+### Future Scope (Unimplemented IEEE Features)
+To achieve production-level accuracy (closer to the paper's 97.31%), the following features from the IEEE methodology remain as future work:
+* **WHOIS & Domain Reputation:** Checking domain age, registration length, and DNS record availability.
+* **SSL Certificate Analysis:** Validating certificate issuers, trust chains, and expiration dates.
+* **Page Content (HTML/JS) Analysis:** Inspecting the actual web page for hidden iframes, disabled right-click, suspicious anchor tag ratios, and external form actions.
+* **Website Traffic & PageRank:** Validating if the domain has a legitimate footprint on the web.
+* **Browser Extension Integration:** Deploying the trained model as a real-time Chrome extension, as opposed to a standalone web interface.

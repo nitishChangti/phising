@@ -49,6 +49,7 @@ def _load_model():
                 _metrics = json.load(f)
 
 
+# Trigger reload of model.pkl
 @csrf_exempt
 @require_http_methods(["POST"])
 def predict_url(request):

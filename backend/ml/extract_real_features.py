@@ -2,7 +2,9 @@ import os
 import sys
 import urllib.request
 import pandas as pd
+import random
 from pathlib import Path
+
 
 # Add parent directory to path to import api.feature_extractor
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -85,6 +87,56 @@ def get_complex_legitimate_urls():
         
     return base_urls + extra_urls
 
+def get_popular_legitimate_urls():
+    domains = [
+        "google.com", "youtube.com", "facebook.com", "amazon.com", "yahoo.com",
+        "wikipedia.org", "instagram.com", "twitter.com", "linkedin.com", "reddit.com",
+        "ebay.com", "pinterest.com", "netflix.com", "github.com", "openai.com",
+        "stackoverflow.com", "microsoft.com", "apple.com", "wordpress.com", "tumblr.com",
+        "blogspot.com", "paypal.com", "imgur.com", "medium.com", "quora.com",
+        "zoom.us", "vimeo.com", "dailymail.co.uk", "cnn.com", "nytimes.com",
+        "bbc.co.uk", "reuters.com", "bloomberg.com", "forbes.com", "techcrunch.com",
+        "wired.com", "guardian.co.uk", "nationalgeographic.com", "imdb.com", "espn.com"
+    ]
+    
+    urls = []
+    for d in domains:
+        urls.extend([
+            f"https://{d}",
+            f"http://{d}",
+            f"https://www.{d}",
+            f"http://www.{d}",
+            f"https://{d}/",
+            f"https://www.{d}/"
+        ])
+    return urls
+
+def get_simulated_phishing_root_urls():
+    keywords = ['paypal', 'amazon', 'netflix', 'google', 'microsoft', 'apple', 'facebook', 'login', 'secure', 'verify', 'update', 'banking', 'confirm', 'alert', 'signin', 'ebay']
+    tlds = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.club', '.info', '.com', '.net']
+    
+    urls = []
+    # Seed random for deterministic generation
+    random.seed(42)
+    for _ in range(250):
+        # Pick 2-3 random keywords and join with hyphens
+        num_kws = random.choice([2, 3])
+        kws = random.sample(keywords, num_kws)
+        domain = "-".join(kws)
+        tld = random.choice(tlds)
+        
+        # Variations of scheme
+        scheme = random.choice(['http://', 'https://'])
+        
+        # 50% chance of www prefix
+        if random.random() < 0.5:
+            url = f"{scheme}www.{domain}{tld}"
+        else:
+            url = f"{scheme}{domain}{tld}"
+            
+        urls.append(url)
+    return urls
+
 def main():
     ml_dir = Path(__file__).resolve().parent
     backend_dir = ml_dir.parent
@@ -116,10 +168,13 @@ def main():
         
     df_legit = pd.read_csv(legit_csv_path)
     
-    # 3. Get complex legitimate URLs to mix in
+    # 3. Get complex, popular legitimate, and simulated phishing root URLs to mix in
     complex_legit_urls = get_complex_legitimate_urls()
+    popular_legit_urls = get_popular_legitimate_urls()
+    simulated_phish_urls = get_simulated_phishing_root_urls()
+    
     print(f"Loaded {len(df_phish)} phishing rows and {len(df_legit)} standard legitimate rows.")
-    print(f"Generating {len(complex_legit_urls)} complex legitimate URLs to prevent query param bias.")
+    print(f"Generating {len(complex_legit_urls)} complex legitimate, {len(popular_legit_urls)} popular legitimate, and {len(simulated_phish_urls)} simulated phishing root URLs.")
     
     # 4. Extract features
     extractor = FeatureExtractor()
@@ -142,11 +197,31 @@ def main():
         if urls_processed % 200 == 0:
             print(f"Processed {urls_processed} phishing URLs...")
             
+    # Process Simulated Phishing Root URLs
+    urls_processed = 0
+    print("\nExtracting features from Simulated Phishing Root URLs (label = 1)...")
+    for url in simulated_phish_urls:
+        try:
+            features = extractor.extract_features(url)
+            extracted_features.append(features)
+            labels.append(1) # Phishing
+        except Exception as e:
+            print(f"Error extracting features for {url}: {e}")
+            
+        urls_processed += 1
+        if urls_processed % 50 == 0:
+            print(f"Processed {urls_processed} simulated phishing root URLs...")
+            
     # Process Standard Legitimate URLs
     urls_processed = 0
     print("\nExtracting features from Standard Legitimate URLs (label = 0)...")
     for idx, row in df_legit.iterrows():
         url = reconstruct_url(row)
+        # Randomly strip 'www.' 50% of the time to train model to be invariant to it
+        if idx % 2 == 0:
+            url_lower = url.lower()
+            if '://www.' in url_lower:
+                url = url.replace('://www.', '://', 1)
         try:
             features = extractor.extract_features(url)
             extracted_features.append(features)
@@ -161,7 +236,12 @@ def main():
     # Process Complex Legitimate URLs
     urls_processed = 0
     print("\nExtracting features from Complex Legitimate URLs (label = 0)...")
-    for url in complex_legit_urls:
+    for idx, url in enumerate(complex_legit_urls):
+        # Randomly strip 'www.' 50% of the time to train model to be invariant to it
+        if idx % 2 == 0:
+            url_lower = url.lower()
+            if '://www.' in url_lower:
+                url = url.replace('://www.', '://', 1)
         try:
             features = extractor.extract_features(url)
             extracted_features.append(features)
@@ -172,6 +252,21 @@ def main():
         urls_processed += 1
         if urls_processed % 50 == 0:
             print(f"Processed {urls_processed} complex legitimate URLs...")
+            
+    # Process Popular Legitimate URLs
+    urls_processed = 0
+    print("\nExtracting features from Popular Legitimate URLs (label = 0)...")
+    for url in popular_legit_urls:
+        try:
+            features = extractor.extract_features(url)
+            extracted_features.append(features)
+            labels.append(0) # Legitimate
+        except Exception as e:
+            print(f"Error extracting features for {url}: {e}")
+            
+        urls_processed += 1
+        if urls_processed % 50 == 0:
+            print(f"Processed {urls_processed} popular legitimate URLs...")
             
     # 5. Build and save dataset
     print("\nBuilding dataset DataFrame...")
@@ -184,3 +279,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
