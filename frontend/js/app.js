@@ -334,11 +334,12 @@ class URLScanner {
             this.historyTableBody.innerHTML = history.map(item => {
                 const badgeClass = item.prediction === 'phishing' ? 'danger' : 'safe';
                 const labelText = item.prediction === 'phishing' ? 'Phishing' : 'Legitimate';
+                const riskScore = item.prediction === 'phishing' ? item.confidence : (100 - item.confidence).toFixed(1);
                 return `
                     <tr>
                         <td class="history-url-cell" title="${item.url}">${item.url}</td>
                         <td><span class="history-badge ${badgeClass}">${labelText}</span></td>
-                        <td style="font-family: var(--font-display); font-weight: 700; color: ${item.prediction === 'phishing' ? 'var(--accent-red)' : 'var(--accent-green)'}">${item.confidence}%</td>
+                        <td style="font-family: var(--font-display); font-weight: 700; color: ${item.prediction === 'phishing' ? 'var(--accent-red)' : 'var(--accent-green)'}">${riskScore}% Risk</td>
                         <td style="color: var(--text-muted); font-size: 0.8rem;">${item.timestamp}</td>
                     </tr>
                 `;
@@ -427,7 +428,7 @@ class URLScanner {
         resultUrl.textContent = data.url;
 
         resultConfidence.className = `badge-confidence ${isPhishing ? 'danger' : 'safe'}`;
-        resultConfidence.textContent = confidence + '%';
+        resultConfidence.textContent = data.phishing_probability + '% Risk';
 
         confidenceFill.className = `confidence-fill ${isPhishing ? 'danger' : 'safe'}`;
         setTimeout(() => {
