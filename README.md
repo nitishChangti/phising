@@ -93,6 +93,24 @@ sequenceDiagram
 
 ---
 
+## 🔒 Security & Validation Pipeline
+
+To ensure the ML model only evaluates realistic threats and doesn't get confused by "garbage" data, a two-step validation pipeline is implemented before inference:
+
+1. **Format Validation (Regex):** Both the frontend and backend actively drop any strings that do not conform to valid URL syntax (e.g., `http://dsfsdfsdf`), ensuring an appropriate top-level domain exists.
+2. **Live DNS Verification:** The Django backend employs a `socket` resolution check to physically verify if the domain is live and reachable on the public internet. If the domain does not resolve, the scan is aborted, preventing the model from analyzing non-existent spoof sites.
+
+---
+
+## 📧 Brevo Email Integration
+
+The application utilizes the **Brevo (Sendinblue) API v3** for robust, developer-friendly communication:
+* **Newsletter Subscriptions:** Located in the footer of all pages, allowing users to subscribe for phishing threat updates.
+* **Contact Form (Transactional Emails):** Automatically sends formatted HTML emails from the `contact.html` page directly to the administrator's inbox using the Brevo SMTP API.
+*(To enable these features, supply your Brevo API Key as `BREVO_API_KEY` in `settings.py` and verify your sender email).*
+
+---
+
 ## 📁 Project Structure
 
 ```text
