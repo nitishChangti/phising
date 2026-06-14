@@ -10,4 +10,6 @@ urlpatterns = [
     path('stats/', views.get_stats, name='get_stats'),
     path('models/', views.get_model_comparison, name='get_model_comparison'),
     path('history/', views.get_history, name='get_history'),
+    path('subscribe/', views.subscribe_newsletter, name='subscribe_newsletter'),
+    path('contact/', views.submit_contact, name='submit_contact'),
 ]

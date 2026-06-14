@@ -98,3 +98,13 @@ ML_MODEL_DIR = BASE_DIR / 'ml'
 ML_MODEL_PATH = ML_MODEL_DIR / 'model.pkl'
 ML_SCALER_PATH = ML_MODEL_DIR / 'scaler.pkl'
 ML_METRICS_PATH = ML_MODEL_DIR / 'metrics.json'
+
+# ==========================================
+# BREVO EMAIL SETTINGS
+# ==========================================
+# 1. Get your v3 API Key from Brevo -> SMTP & API -> API Keys
+BREVO_API_KEY = ""
+
+# 2. Put your own email address here so you receive the contact form messages.
+# NOTE: This email MUST be a verified sender in your Brevo account!
+ADMIN_EMAIL = ""

@@ -5,6 +5,8 @@ Provides endpoints for URL prediction, stats, and model comparison.
 
 import json
 import os
+import socket
+import urllib.parse
 import numpy as np
 from pathlib import Path
 
@@ -75,6 +77,27 @@ def predict_url(request):
         return JsonResponse({
             'error': 'URL is required'
         }, status=400)
+
+    if not url.startswith(('http://', 'https://')):
+        return JsonResponse({
+            'error': 'URL must start with http:// or https://'
+        }, status=400)
+
+    # Validate domain and check DNS resolution
+    try:
+        parsed_url = urllib.parse.urlparse(url)
+        domain = parsed_url.hostname
+        if not domain:
+            return JsonResponse({'error': 'Invalid URL format: No domain found.'}, status=400)
+        
+        # Resolve the domain to ensure it actually exists on the internet
+        socket.gethostbyname(domain)
+    except socket.gaierror:
+        return JsonResponse({
+            'error': 'This domain does not exist or is offline. Only live websites can be scanned.'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'URL parsing error: {str(e)}'}, status=400)
 
     if _model is None:
         return JsonResponse({
@@ -242,3 +265,116 @@ def get_history(request):
         return JsonResponse({'history': history_list})
     except Exception as e:
         return JsonResponse({'error': f'Database query error: {str(e)}'}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def subscribe_newsletter(request):
+    """
+    Subscribe an email to Brevo newsletter.
+    
+    POST /api/subscribe/
+    Body: {"email": "user@example.com"}
+    """
+    import requests
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+        
+        if not email or '@' not in email or '.' not in email:
+            return JsonResponse({'error': 'Please provide a valid email address'}, status=400)
+            
+        api_key = getattr(settings, 'BREVO_API_KEY', os.environ.get('BREVO_API_KEY'))
+        if not api_key:
+            # Fallback for development if API key is missing
+            print(f"[PhishShield] Brevo Mock Subscription: {email}")
+            return JsonResponse({'message': 'Subscribed successfully (Mock mode)'})
+            
+        url = "https://api.brevo.com/v3/contacts"
+        headers = {
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json"
+        }
+        payload = {
+            "email": email,
+            "updateEnabled": True
+        }
+        
+        response = requests.post(url, json=payload, headers=headers)
+        
+        if response.status_code in [201, 204]:
+            return JsonResponse({'message': 'Subscribed successfully'})
+        elif response.status_code == 400 and 'duplicate' in response.text.lower():
+            return JsonResponse({'message': 'Already subscribed!'})
+        else:
+            return JsonResponse({
+                'error': 'Failed to subscribe with Brevo',
+                'details': response.json() if response.text else 'Unknown error'
+            }, status=response.status_code)
+            
+    except Exception as e:
+        return JsonResponse({'error': f'Subscription error: {str(e)}'}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def submit_contact(request):
+    """
+    Send contact form message via Brevo Transactional Email API.
+    
+    POST /api/contact/
+    Body: {"name": "John", "email": "john@example.com", "subject": "Hello", "message": "Test"}
+    """
+    import requests
+    try:
+        data = json.loads(request.body)
+        name = data.get('name', '').strip()
+        email = data.get('email', '').strip()
+        subject = data.get('subject', '').strip()
+        message = data.get('message', '').strip()
+        
+        if not all([name, email, subject, message]):
+            return JsonResponse({'error': 'All fields are required.'}, status=400)
+            
+        if '@' not in email or '.' not in email:
+            return JsonResponse({'error': 'Please provide a valid email address.'}, status=400)
+            
+        api_key = getattr(settings, 'BREVO_API_KEY', os.environ.get('BREVO_API_KEY'))
+        if not api_key:
+            # Fallback for development if API key is missing
+            print(f"[PhishShield] Brevo Mock Contact Form: From {name} ({email}) - {subject}\n{message}")
+            return JsonResponse({'message': 'Message sent successfully! (Mock mode)'})
+            
+        url = "https://api.brevo.com/v3/smtp/email"
+        headers = {
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json"
+        }
+        
+        # Send to the site admin (or you can use the sender's email if configured in Brevo)
+        # Brevo requires the sender to be a verified domain/email in your account.
+        # So we set sender as the site admin, and reply-to as the user.
+        admin_email = getattr(settings, 'ADMIN_EMAIL', 'support@phishshield.ai')
+        
+        payload = {
+            "sender": {"name": "PhishShield Contact Form", "email": admin_email},
+            "to": [{"email": admin_email, "name": "PhishShield Admin"}],
+            "replyTo": {"email": email, "name": name},
+            "subject": f"New Contact: {subject}",
+            "htmlContent": f"<h3>New message from {name} ({email})</h3><p><strong>Subject:</strong> {subject}</p><hr><p>{message.replace(chr(10), '<br>')}</p>"
+        }
+        
+        response = requests.post(url, json=payload, headers=headers)
+        
+        if response.status_code in [201, 204]:
+            return JsonResponse({'message': 'Message sent successfully!'})
+        else:
+            return JsonResponse({
+                'error': 'Failed to send message via Brevo',
+                'details': response.json() if response.text else 'Unknown error'
+            }, status=response.status_code)
+            
+    except Exception as e:
+        return JsonResponse({'error': f'Server error: {str(e)}'}, status=500)

@@ -359,6 +359,11 @@ class URLScanner {
             this.heroBtn.addEventListener('click', () => {
                 const url = this.heroInput.value.trim();
                 if (url) {
+                    const urlRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$|^(https?:\/\/)(?:\d{1,3}\.){3}\d{1,3}(:\d+)?(\/.*)?$/;
+                    if (!urlRegex.test(url)) {
+                        alert('Please enter a valid URL with a proper domain extension (e.g., https://example.com)');
+                        return;
+                    }
                     localStorage.setItem('pendingScanUrl', url);
                     window.location.href = 'detection.html';
                 }
@@ -369,7 +374,14 @@ class URLScanner {
         if (this.detBtn) {
             this.detBtn.addEventListener('click', () => {
                 const url = this.detInput.value.trim();
-                if (url) this.scanURL(url);
+                if (url) {
+                    const urlRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$|^(https?:\/\/)(?:\d{1,3}\.){3}\d{1,3}(:\d+)?(\/.*)?$/;
+                    if (!urlRegex.test(url)) {
+                        alert('Please enter a valid URL with a proper domain extension (e.g., https://example.com)');
+                        return;
+                    }
+                    this.scanURL(url);
+                }
             });
             this.detInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.detBtn.click(); });
         }
@@ -653,25 +665,61 @@ class ContactForm {
             });
         }
 
-        this.form.addEventListener('submit', (e) => {
+        this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = this.form.querySelector('.form-submit-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i data-lucide="check-circle-2"></i> Message Sent!';
-            btn.style.background = 'rgba(16, 185, 129, 0.25)';
-            btn.style.color = '#10b981';
-            btn.style.boxShadow = 'none';
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Sending...';
+            btn.disabled = true;
             if (window.lucide) lucide.createIcons();
 
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.background = '';
-                btn.style.color = '';
-                btn.style.boxShadow = '';
-                this.form.reset();
-                if (counter) counter.textContent = '0/500';
+            try {
+                const response = await fetch('/api/contact/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, subject, message })
+                });
+                
+                if (response.ok) {
+                    btn.innerHTML = '<i data-lucide="check-circle-2"></i> Message Sent!';
+                    btn.style.background = 'rgba(16, 185, 129, 0.25)';
+                    btn.style.color = '#10b981';
+                    btn.style.boxShadow = 'none';
+                    if (window.lucide) lucide.createIcons();
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        btn.style.boxShadow = '';
+                        btn.disabled = false;
+                        this.form.reset();
+                        if (counter) counter.textContent = '0/500';
+                        if (window.lucide) lucide.createIcons();
+                    }, 4000);
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                btn.innerHTML = '<i data-lucide="alert-triangle"></i> Failed. Try again';
+                btn.style.background = 'rgba(239, 68, 68, 0.25)';
+                btn.style.color = '#ef4444';
                 if (window.lucide) lucide.createIcons();
-            }, 3000);
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.disabled = false;
+                    if (window.lucide) lucide.createIcons();
+                }, 4000);
+            }
         });
     }
 }
@@ -749,9 +797,73 @@ class StatsLoader {
     }
 
     setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
-    setBar(sel, val) { const bar = document.querySelector(sel); if (bar) bar.dataset.width = val; }
+    setBar(sel, val) { 
+        const bar = document.querySelector(sel); 
+        if (bar) {
+            bar.dataset.width = val;
+            bar.style.width = val + '%';
+        }
+    }
 }
 
+
+// ============================================================
+// 7. NEWSLETTER FORM
+// ============================================================
+class NewsletterForm {
+    constructor() {
+        this.forms = document.querySelectorAll('.newsletter-form');
+        if (!this.forms.length) return;
+        
+        this.forms.forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const input = form.querySelector('.newsletter-email');
+                const btn = form.querySelector('button[type="submit"]');
+                const msg = form.nextElementSibling; // the .newsletter-message p tag
+                const email = input.value.trim();
+                
+                // Frontend Validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    msg.textContent = 'Please enter a valid email address.';
+                    msg.style.color = 'var(--accent-red)';
+                    return;
+                }
+                
+                btn.disabled = true;
+                btn.textContent = 'Subscribing...';
+                msg.textContent = '';
+                
+                try {
+                    const response = await fetch('/api/subscribe/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        msg.textContent = data.message || 'Subscribed successfully!';
+                        msg.style.color = 'var(--accent-green)';
+                        input.value = '';
+                    } else {
+                        msg.textContent = data.error || data.message || 'Subscription failed.';
+                        msg.style.color = 'var(--accent-red)';
+                    }
+                } catch (error) {
+                    msg.textContent = 'Network error. Please try again.';
+                    msg.style.color = 'var(--accent-red)';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Subscribe';
+                }
+            });
+        });
+    }
+}
 
 // ============================================================
 // INITIALIZE
@@ -768,6 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new URLScanner();
     new ContactForm();
     new StatsLoader();
+    new NewsletterForm();
 
     console.log('%c🛡️ PhishShield AI', 'color: #00e5a0; font-size: 24px; font-weight: bold;');
     console.log('%cML-powered phishing detection system', 'color: #666; font-size: 12px;');
