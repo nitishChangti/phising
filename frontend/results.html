@@ -260,17 +260,17 @@
             <div class="results-bottom-stats animate-on-scroll">
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-green"><i data-lucide="shield-check" class="rb-lucide"></i></div>
-                    <div class="rb-value">90.9%</div>
+                    <div class="rb-value" id="bottom-accuracy">90.9%</div>
                     <div class="rb-label">Our Accuracy</div>
                 </div>
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-cyan"><i data-lucide="crosshair" class="rb-lucide"></i></div>
-                    <div class="rb-value">91.3%</div>
+                    <div class="rb-value" id="bottom-precision">91.3%</div>
                     <div class="rb-label">Precision</div>
                 </div>
                 <div class="rb-card">
                     <div class="rb-icon rb-icon-purple"><i data-lucide="bar-chart-3" class="rb-lucide"></i></div>
-                    <div class="rb-value">88.4%</div>
+                    <div class="rb-value" id="bottom-recall">88.4%</div>
                     <div class="rb-label">Recall</div>
                 </div>
                 <div class="rb-card">
@@ -349,7 +349,8 @@
             </div>
         </div>
     </footer>
-
-    <script src="/js/app.js"></script>
+    <!-- Main Script (Cache Busted) -->
+    <script src="/js/app.js?v=4"></script>
+    
 </body>
 </html>

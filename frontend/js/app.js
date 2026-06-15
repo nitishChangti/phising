@@ -154,10 +154,16 @@ class ScrollAnimator {
 
     animateProgressBars() {
         document.querySelectorAll('.algo-fill').forEach((bar) => {
-            const width = bar.dataset.width;
-            if (width) {
-                setTimeout(() => { bar.style.width = width + '%'; }, 300);
-            }
+            // Delay the width application for the visual animation effect,
+            // but critically: read the dataset.width INSIDE the timeout.
+            // This prevents race conditions if the API updates the dataset.width 
+            // while the timeout is waiting!
+            setTimeout(() => { 
+                const width = bar.dataset.width;
+                if (width) {
+                    bar.style.width = width + '%'; 
+                }
+            }, 300);
         });
     }
 
@@ -732,13 +738,29 @@ class StatsLoader {
     constructor() { this.loadStats(); }
 
     async loadStats() {
+        // 1. Immediately load and apply from LocalStorage to prevent layout shift / old data flash
+        const cached = localStorage.getItem('phishshield_metrics');
+        if (cached) {
+            try {
+                this.updateUI(JSON.parse(cached));
+            } catch (e) {
+                console.log("Cache parsing error", e);
+            }
+        }
+
+        // 2. Fetch the fresh latest data from the Django DB backend
         try {
             const response = await fetch('/api/models/');
             if (!response.ok) return;
             const data = await response.json();
+            
+            // 3. Save to localStorage for next time and update UI
+            localStorage.setItem('phishshield_metrics', JSON.stringify(data));
             this.updateUI(data);
         } catch (e) {
-            console.log('Using default stats (API not available)');
+            console.log('Using default stats (API not available or server stopped)');
+            // 4. If the server is stopped/offline, remove the cached data
+            localStorage.removeItem('phishshield_metrics');
         }
     }
 
@@ -752,6 +774,12 @@ class StatsLoader {
             this.setText('rf-precision', rf.precision + '%');
             this.setText('rf-recall', rf.recall + '%');
             this.setText('rf-f1', rf.f1_score + '%');
+            
+            // Bottom Metric Cards
+            this.setText('bottom-accuracy', rf.accuracy + '%');
+            this.setText('bottom-precision', rf.precision + '%');
+            this.setText('bottom-recall', rf.recall + '%');
+            
             if (rf.confusion_matrix) {
                 const cm = rf.confusion_matrix;
                 this.setText('cm-tp', cm.true_positive.toLocaleString());
@@ -801,7 +829,9 @@ class StatsLoader {
         const bar = document.querySelector(sel); 
         if (bar) {
             bar.dataset.width = val;
-            bar.style.width = val + '%';
+            // Force dynamic animation by resetting and sliding up
+            bar.style.width = '0%';
+            setTimeout(() => { bar.style.width = val + '%'; }, 100);
         }
     }
 }

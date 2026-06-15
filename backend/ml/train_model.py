@@ -276,6 +276,21 @@ def main():
         json.dump(metrics, f, indent=2)
     print(f"Metrics saved to {metrics_path}")
 
+    # Also save to the Database
+    try:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "phishshield.settings")
+        import django
+        django.setup()
+        from api.models import SystemMetrics
+        
+        # We can either update the existing row or create a new one. 
+        # Creating a new one gives us a history, or we can just keep one. 
+        # Let's just create a new one and we can fetch the latest.
+        SystemMetrics.objects.create(metrics_data=metrics)
+        print("Metrics successfully saved to the Django Database (SystemMetrics).")
+    except Exception as e:
+        print(f"Warning: Could not save metrics to database. Make sure migrations are applied. Error: {e}")
+
     print("\n" + "="*50)
     print("TRAINING COMPLETE!")
     print(f"Best Model: Random Forest ({results['Random Forest']['accuracy']}% accuracy)")

@@ -208,8 +208,17 @@ def get_model_comparison(request):
     GET /api/models/
     """
     _load_model()
+    from .models import SystemMetrics
 
-    if _metrics is None:
+    # Fetch from database first (dynamic, no restart needed)
+    try:
+        latest_metrics = SystemMetrics.objects.latest('updated_at')
+        metrics_data = latest_metrics.metrics_data
+    except SystemMetrics.DoesNotExist:
+        # Fallback to the global JSON file loaded in _load_model()
+        metrics_data = _metrics
+
+    if not metrics_data:
         return JsonResponse({
             'error': 'Metrics not available. Run train_model.py first.'
         }, status=503)
@@ -219,7 +228,7 @@ def get_model_comparison(request):
     if _model is not None:
         try:
             importances = _model.feature_importances_
-            feature_names = _metrics.get('feature_names', [])
+            feature_names = metrics_data.get('feature_names', [])
             features_zipped = sorted(
                 zip(feature_names, importances),
                 key=lambda x: x[1],
@@ -236,9 +245,9 @@ def get_model_comparison(request):
             print(f"Error extracting feature importances: {e}")
 
     return JsonResponse({
-        'models': _metrics.get('model_results', {}),
-        'best_model': _metrics.get('best_model', 'Random Forest'),
-        'dataset_stats': _metrics.get('dataset_stats', {}),
+        'models': metrics_data.get('model_results', {}),
+        'best_model': metrics_data.get('best_model', 'Random Forest'),
+        'dataset_stats': metrics_data.get('dataset_stats', {}),
         'feature_importance': feature_importance
     })
 
