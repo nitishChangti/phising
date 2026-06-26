@@ -71,6 +71,7 @@ def generate_synthetic_dataset(n_samples=11055):
             'num_query_params': np.random.choice([0, 1, 2, 3], n, p=[0.4, 0.3, 0.2, 0.1]),
             'has_fragment': np.random.choice([0, 1], n, p=[0.9, 0.1]),
             'url_depth': np.random.choice([1, 2, 3, 4], n, p=[0.25, 0.35, 0.25, 0.15]),
+            'has_deceptive_https': np.zeros(n, dtype=int),
             'label': np.zeros(n, dtype=int)
         })
 
@@ -106,6 +107,7 @@ def generate_synthetic_dataset(n_samples=11055):
             'num_query_params': np.random.choice([0, 1, 2, 3, 4, 5], n, p=[0.15, 0.2, 0.25, 0.2, 0.12, 0.08]),
             'has_fragment': np.random.choice([0, 1], n, p=[0.7, 0.3]),
             'url_depth': np.random.choice([2, 3, 4, 5, 6], n, p=[0.15, 0.25, 0.3, 0.2, 0.1]),
+            'has_deceptive_https': np.random.choice([0, 1], n, p=[0.9, 0.1]),
             'label': np.ones(n, dtype=int)
         })
 
