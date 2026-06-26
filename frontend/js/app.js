@@ -411,7 +411,15 @@ class URLScanner {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url }),
             });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                if (errData.error) {
+                    alert(`Scan Error: ${errData.error}`);
+                    this.loadingDiv.style.display = 'none';
+                    return;
+                }
+                throw new Error(`HTTP ${response.status}`);
+            }
             const data = await response.json();
             this.showResult(data);
         } catch (error) {
@@ -647,7 +655,8 @@ class URLScanner {
                 'Num Digits': (url.match(/\d/g) || []).length,
                 'Num Special Chars': 2,
                 'Num Slashes': (url.match(/\//g) || []).length,
-                'Num Dots': (url.match(/\./g) || []).length
+                'Num Dots': (url.match(/\./g) || []).length,
+                'Has Deceptive Https': urlLower.includes('https') ? 1 : 0
             }
         };
         this.showResult(demoData);

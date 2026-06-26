@@ -150,6 +150,9 @@ class FeatureExtractor:
         # 30. URL depth (number of subdirectories)
         features['url_depth'] = len([p for p in path.split('/') if p])
 
+        # 31. Has deceptive HTTPS token in domain
+        features['has_deceptive_https'] = 1 if 'https' in domain.lower() else 0
+
         return features
 
     def extract_feature_vector(self, url):
@@ -169,7 +172,7 @@ class FeatureExtractor:
             'url_entropy', 'domain_entropy', 'num_suspicious_keywords',
             'is_shortened', 'path_double_slash', 'has_redirect',
             'domain_has_numbers', 'query_length', 'num_query_params',
-            'has_fragment', 'url_depth'
+            'has_fragment', 'url_depth', 'has_deceptive_https'
         ]
 
     def _has_ip_address(self, domain):

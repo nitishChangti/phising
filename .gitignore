@@ -21,3 +21,8 @@ ENV/
 .idea/
 *.swp
 *.swo
+
+# Documentation and Reports
+*.docx
+*.pdf
+~$*.docx

@@ -215,17 +215,17 @@ The server will boot at **`http://127.0.0.1:8000/`**. Because Django settings ar
 
 ---
 
-## 📊 Feature Extraction Pipeline
-The `FeatureExtractor` class converts a URL string into a 30-dimensional array. The current implementation focuses on URL-based lexical and structural indicators:
+## 🧠 Feature Extraction Pipeline
+The `FeatureExtractor` class converts a URL string into a 31-dimensional array. The current implementation focuses on URL-based lexical and structural indicators:
 
 | Feature Category | Features | Description |
 | :--- | :--- | :--- |
 | **Length & Structure** | `url_length`, `domain_length`, `path_length`, `url_depth`, `query_length`, `num_query_params` | Measures how large, nested, and parameter-heavy the URL is. |
 | **Character Patterns** | `num_dots`, `num_hyphens`, `num_underscores`, `num_slashes`, `num_query_marks`, `num_ampersands`, `num_equals`, `num_digits`, `num_special_chars` | Detects obfuscation and unusual URL composition. |
-| **Suspicious URL Signals** | `has_at_symbol`, `has_ip_address`, `uses_https`, `num_subdomains`, `has_suspicious_tld`, `is_shortened`, `has_redirect`, `path_double_slash`, `has_fragment` | Captures common address-bar phishing indicators from the IEEE methodology. |
+| **Suspicious URL Signals** | `has_at_symbol`, `has_ip_address`, `uses_https`, `has_deceptive_https`, `num_subdomains`, `has_suspicious_tld`, `is_shortened`, `has_redirect`, `path_double_slash`, `has_fragment` | Captures common address-bar phishing indicators from the IEEE methodology. |
 | **Lexical Risk** | `url_entropy`, `domain_entropy`, `num_suspicious_keywords`, `domain_has_numbers`, `num_digits_domain`, `has_port` | Identifies randomness, brand-abuse keywords, numeric domains, and uncommon port usage. |
 
-Future scope from the IEEE methodology includes WHOIS/domain age, DNS record checks, SSL certificate details, website traffic, Google indexing, PageRank, HTML/JavaScript analysis, and NLP-based content analysis.
+Future scope from the IEEE methodology includes WHOIS/domain age, SSL certificate details, website traffic, Google indexing, PageRank, HTML/JavaScript analysis, and NLP-based content analysis.
 
 ---
 
@@ -250,7 +250,7 @@ While this project successfully implements the core machine learning pipeline pr
 
 ### Future Scope (Unimplemented IEEE Features)
 To achieve production-level accuracy (closer to the paper's 97.31%), the following features from the IEEE methodology remain as future work:
-* **WHOIS & Domain Reputation:** Checking domain age, registration length, and DNS record availability.
+* **WHOIS & Domain Reputation:** Checking domain age, registration length, and WHOIS record availability.
 * **SSL Certificate Analysis:** Validating certificate issuers, trust chains, and expiration dates.
 * **Page Content (HTML/JS) Analysis:** Inspecting the actual web page for hidden iframes, disabled right-click, suspicious anchor tag ratios, and external form actions.
 * **Website Traffic & PageRank:** Validating if the domain has a legitimate footprint on the web.
